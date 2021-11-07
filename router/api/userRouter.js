@@ -118,7 +118,7 @@ router.delete("/:userid",async(req,res)=>{
     const userdelete=await User.findById({id:req.body.userid});
     if(!userdelete)
     {
-        User.findByIdAndUpdate(req.body.userid,{status:true},(error,user)=>{
+        User.findByIdAndUpdate(req.body.userid,{status:false},(error,user)=>{
             if(error) throw error;
             else
             {
