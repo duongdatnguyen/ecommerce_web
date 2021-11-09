@@ -4,17 +4,19 @@ const autoIncrement= require("mongoose-auto-increment");
 
 const SubCategorySchema=mongoose.Schema(
     {
-        ParentCategoryId:{
+        categoryID:{
             type:Number,
             ref:"category"
         },
+        
         namesubCategory:{
             type:String,
             require:true
         },
         substatus:{
             type:Boolean,
-            require:true
+            require:true,
+            default:true
         },
         icon:{
             type:String,

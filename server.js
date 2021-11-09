@@ -7,6 +7,10 @@ const userRouter=require("./router/api/userRouter");
 const auth=require('./router/api/auth');
 const address=require("./router/api/user/address");
 const categories=require("./router/api/category/Category");
+const subcategories=require("./router/api/category/SubCategory");
+
+
+
 
 const configPassport=require("./config/passport");
 const session=require("express-session");
@@ -25,7 +29,7 @@ app.use("/users",userRouter);
 app.use("/",auth);
 app.use("/addresses",address);
 app.use("/categories",categories);
-
+app.use("/subcategories",subcategories);
 
 
 const PORT=process.env.PORT||3000;

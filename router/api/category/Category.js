@@ -1,6 +1,8 @@
 const express=require("express");
 const AppError = require("../../../models/AppError");
 const Category = require("../../../models/Category");
+
+const SubCategory=require("../../../models/SubCategory");
 const router=express.Router();
 
 
@@ -19,8 +21,8 @@ router.post("/",async(req,res)=>{
 
 
         const categoryExist= await Category.find({nameCategory:nameCategory});
-    
-        if(categoryExist)
+        console.log(categoryExist)
+        if(categoryExist.length===1)
         {
             return res.status(400).json(new AppError("Category have exist"));
         }
@@ -74,6 +76,26 @@ router.put("/:cateogoryId",async(req,res)=>{
  * Get One
  */
 
+/**
+ * 
+ * 
+ * Get All category
+ */
+
+ router.get("/",async(req,res)=>{
+    try
+    {
+       
+        const cateogries=await Category.find({status:true}).sort({datecreated:1});
+        res.status(200).json(cateogries);
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(404).json(new AppError(error));
+    }
+    
+});
 
 /**
  * Sort
@@ -84,7 +106,7 @@ router.put("/:cateogoryId",async(req,res)=>{
         const categoryId=req.params.cateogoryId;
 
 
-        const categoryExist=await Category.findById(categoryId);
+        const categoryExist=await Category.findById(categoryId).populate("subcategories");
     
         if(!categoryExist)
         {
@@ -101,24 +123,6 @@ router.put("/:cateogoryId",async(req,res)=>{
     
 });
 
- router.get("/paging",async(req,res)=>{
-    const page=req.query.page*1||1;
-    const limit =req.query.limit;
-    const skip=(page-1)*limit;
-    let query=Category.find().select("-password").sort({datecreated:-1});
-    query=query.skip(skip).limit(limit);
-    if(req.query.page)
-    {
-        const numUsers=await Category.countDocuments();
-        if(skip>numUsers)
-        {
-            res.status(400).json(new AppError("Can't paging category"));
-        }
-
-    }
-    const categories=await query;
-    res.json(categories);
-})
 
 /**
  * 
@@ -130,7 +134,7 @@ router.put("/:cateogoryId",async(req,res)=>{
         const categoryId=req.params.cateogoryId;
 
 
-        const categoryExist=await Category.findById(categoryId);
+        const categoryExist=await Category.findById(categoryId).populate("subcategories");
         console.log(categoryId);
         if(!categoryExist)
         {
@@ -148,6 +152,60 @@ router.put("/:cateogoryId",async(req,res)=>{
     }
     
 });
+
+
+
+
+router.put("/activate/:cateogoryId",async(req,res)=>{
+    try
+    {
+        const categoryId=req.params.cateogoryId;
+
+
+        const categoryExist=await Category.findById(categoryId);
+        console.log(categoryId);
+        if(!categoryExist)
+        {
+            return res.status(400).json(new AppError("Category haven't exist"));
+        }
+         categoryExist.status=true;
+         await categoryExist.save();
+
+        res.json(categoryExist);
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(404).json(new AppError("Can't activate category"));
+    }
+    
+});
+
+/**
+ * 
+ * 
+ * Get SubCategory
+ */
+
+router.get("/name/:name",async(req,res)=>{
+    try
+    {
+        const categoryfind=await Category.find({nameCategory:req.params.name}).populate("subcategories");
+        if(!categoryfind)
+        {
+            return res.status(400).json(new AppError("Category haven't exist"));
+        }
+
+        res.status(200).json(categoryfind);
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(404).json(new AppError(error));
+    }
+    
+});
+
 
 
 module.exports=router;

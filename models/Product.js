@@ -3,14 +3,13 @@ const autoIncrement= require("mongoose-auto-increment");
 
 const ProductSchema=mongoose.Schema({
 
-    categoryId: {
+    subcategoryId: {
         type: mongoose.Schema.Types.Number,
         required: true,
-        ref: "category.subCategory.subCategoryId",
+        ref: "subCategory",
       },
       brandId: {
         type: mongoose.Schema.Types.Number,
-        required: true,
         ref: "Brands",
       },
       name: {

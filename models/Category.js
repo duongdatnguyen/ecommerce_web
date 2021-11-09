@@ -1,7 +1,6 @@
 const mongoose=require("mongoose");
 const autoIncrement= require("mongoose-auto-increment");
-
-
+const Schema = mongoose.Schema
 
 
 
@@ -12,12 +11,16 @@ const CategorySchema=mongoose.Schema({
     },
     status:{
         type:Boolean,
-        require:true
+        require:true,
+        default:true
     },
     datecreated:{
         type: Date, default: Date.now
-    }
-
+    },
+    subcategories:[{
+        type: Number,
+            ref:"subCategory"
+    }]
 });
 
 

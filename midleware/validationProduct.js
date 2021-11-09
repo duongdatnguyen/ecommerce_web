@@ -1,17 +1,23 @@
 const {check,validationResult, body}=require('express-validator');
-
-
+const Category =require("../models/Category");
+const SubCategory=require("../models/SubCategory");
+const AppError
 class ValidationProduct
 {
         async checkvaliadtionProduct (req,res,next)
         {
+
+            const subcateogryId=await SubCategory.findById(req.body.subcateogryId);
+            
+            if(!subcateogryId)
+            {
+                return res.status(400).json(new AppError("Subcategory undenfined"));
+            }
             await check('name').isLength({ min: 1 }).withMessage("Please enter name product")
             .run(req);
             await check('orgin').isLength({ min: 1 }).withMessage("Please enter orgin")
             .run(req);
             await check('material').isLength({ min: 1 }).withMessage("Please enter material")
-            .run(req);
-            await check('description').isLength({ min: 1 }).withMessage("Please enter description")
             .run(req);
             await check('description').isLength({ min: 1 }).withMessage("Please enter description")
             .run(req);
