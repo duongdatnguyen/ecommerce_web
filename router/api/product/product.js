@@ -10,21 +10,14 @@ router.get("/paging",async(req,res)=>{
     const page=req.query.page*1||1;
     const limit =req.query.limit;
     const skip=(page-1)*limit;
-    const brandId=req.query.brandID;
-    const categoryID=req.query.categoryID;
-    let query=Product.find().populate('categoryId').populate('brandId').select("name price namesubCategory nameBrand");
+    const subcategoryId=req.query.subcategoryId;
+    let query=Product.find().populate('subcategoryId');
     //Sort by brand by Category
-    if(brandId)
+    if(subcategoryId)
     {
-        query.where("brandId").equals(brandId);
-    }
-    if(categoryID)
-    {
-        query.where("categoryID").equals(categoryID);
+        query.where("subcategoryId").equals(subcategoryId);
     }
 
-
-    
     query=query.skip(skip).limit(limit);
     if(req.query.page)
     {
@@ -36,32 +29,40 @@ router.get("/paging",async(req,res)=>{
 
     }
     const products=await query;
-    res.json(products);
+    res.status(200).json(products);
 })
 
 
 //Update Iamge 
 
-router.post("/images",multer.single("photo"),async(req,res)=>{
+router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
     
+    const productUpdate= await Product.findById(req.params.productId);
+    if(!productUpdate)
+        {
+            return res.status(400).json(new AppError("Product does not exist!!!"));
+        }
+    productUpdate.images=req.file.path;
+    await productUpdate.save();
+    return res.status(200).json(productUpdate);
 })
 
 //Add product 
-router.post("/",validationProduct,async(req,res)=>{
+router.post("/",validationProduct.checkvaliadtionProduct,async(req,res)=>{
     try{
-        const product =Product.findOne({name:req.body.name});
-        if(product)
+        const productExist=await Product.findOne({name:req.body.name});
+        if(productExist)
         {
-            res.status(400).json(new AppError("Product have exist!!!"));
+            return res.status(400).json(new AppError("Product have exist!!!"));
         }
         const proudctAdd= new Product(req.body);
 
         await proudctAdd.save();
-        res.status(200).json(proudctAdd);
+        return  res.status(200).json(proudctAdd);
     }
     catch(error)
     {
-        res.status(400).json(new AppError(error));
+        return res.status(400).json(new AppError(error));
     }
 })
 
@@ -82,18 +83,18 @@ router.put("/:productId",async(req,res)=>{
 
 //Get product
 router.get('/:idProduct',async(req,res)=>{
-        const product =await Product.findById(req.params.idProduct).populate('categoryId').populate('brandId');
+        const product =await Product.findById(req.params.idProduct).populate('subcategoryId');
         if(!product)
         {
-            res.status(400).json(new AppError("Product haven't exist"));
+           return res.status(400).json(new AppError("Product haven't exist"));
         }
-        req.status(200).json(product);
+       return res.status(200).json(product);
 });
 
 //Delete product 
 
 router.delete('/:idProduct',async(req,res)=>{
-    const product =await Product.findById(req.params.idProduct).populate('categoryId').populate('brandId');
+    const product =await Product.findById(req.params.idProduct).populate('subcategoryId');
         if(!product)
         {
             res.status(400).json(new AppError("Product haven't exist"));
@@ -107,3 +108,6 @@ router.delete('/:idProduct',async(req,res)=>{
     });
        
 })
+
+
+module.exports=router;

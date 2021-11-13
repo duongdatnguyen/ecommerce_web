@@ -1,14 +1,14 @@
 const {check,validationResult, body}=require('express-validator');
 const Category =require("../models/Category");
 const SubCategory=require("../models/SubCategory");
-const AppError
+const AppError=require("../models/AppError");
 class ValidationProduct
 {
         async checkvaliadtionProduct (req,res,next)
         {
+            console.log(req.body.subcategoryId);
+            const subcateogryId=await SubCategory.findById(req.body.subcategoryId);
 
-            const subcateogryId=await SubCategory.findById(req.body.subcateogryId);
-            
             if(!subcateogryId)
             {
                 return res.status(400).json(new AppError("Subcategory undenfined"));
