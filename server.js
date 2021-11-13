@@ -2,7 +2,7 @@ const { Router } = require("express");
 const express=require("express");
 const app=express();
 const connnectDB=require("./config/connectDB");
-const cors = require('cors');
+
 const passport=require("passport");
 const userRouter=require("./router/api/userRouter");
 const auth=require('./router/api/auth');
@@ -23,7 +23,6 @@ app.use(session({ secret: 'thisissercet',
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-app.use(cors())
 
 connnectDB();
 app.use("/users",userRouter);
