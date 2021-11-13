@@ -55,7 +55,7 @@ router.post("/",async(req,res)=>{
                     {id:user.id},
                 }
 
-                jwt.sign(payload,Sercet_token,{expiresIn:36000},(error,token)=>{
+                jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
                     if(error) return  res.json({error:[{"msg":error}]});
                     const message={ // thiết lập đối tượng, nội dung gửi mail
                         from: 'Thanh Batmon',
@@ -65,8 +65,10 @@ router.post("/",async(req,res)=>{
                         html: "<p>You have got a new message<p>"
                     }
                     // console.log(message);
-                    sendEmail(message);
-                    res.json({token});
+                    // sendEmail(message);
+
+                const userfind=await User.findOne({email:email}).select("email role");
+                    res.json({jwt:token,user:userfind});
                 })
 
                 

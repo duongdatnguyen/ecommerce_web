@@ -12,7 +12,7 @@ const passport = require("passport");
 
 
 //api/users
-/**
+/*
  * Register User
  * 
  */

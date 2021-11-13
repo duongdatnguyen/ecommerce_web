@@ -52,7 +52,7 @@ router.post("/",auth,async(req,res)=>{
  * Update items in order. Udpate total price
  */
 
-router.put("/:orderId",auth,secureAPi,async(req,res)=>{
+router.put("/:orderId",auth,async(req,res)=>{
     const orderId=req.params.orderId;
     const orderUpdate=await Order.findById(orderId);
     if(!orderUpdate)
@@ -63,13 +63,15 @@ router.put("/:orderId",auth,secureAPi,async(req,res)=>{
     const items=req.body.items;
     for(let i=0;i<items.length;i++)
     {
-        const itemAdd=ItemOrder.findById(items[i]._id);
-        itemAdd.quantity=itemIds[i].quantity;
-        itemAdd.totalPrice=itemIds[i].totalPrice;
+        const itemAdd= await ItemOrder.findById(items[i]._id);
+        itemAdd.quantity=items[i].quantity;
+        itemAdd.totalPrice=items[i].totalPrice;
         await itemAdd.save();
     }
     orderUpdate.totalPrice=req.body.totalPrice;
     await orderUpdate.save();
+    const order=await Order.findById(orderUpdate._id).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    return res.status(200).json(order);
 })
 
 
@@ -89,6 +91,20 @@ router.delete("/:orderId",auth,secureAPi,async(req,res)=>{
                 return res.status(200).json(result);
         });
 });
+
+router.get("/search",async(req,res)=>{
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);  
+    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+   
+    const orders=await query;
+    res.status(200).json(orders);
+})
 
 
 module.exports=router;

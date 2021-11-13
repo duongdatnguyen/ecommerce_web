@@ -1,7 +1,13 @@
+
+
+
+
+
 const express=require("express");
+const router=express.Router();
 const validationProduct = require("../../../midleware/validationProduct");
 const Product = require("../../../models/Product");
-const router=express.Router();
+
 const AppError = require("../../../models/AppError");
 const multer=require("../../../services/multer");
 
@@ -107,6 +113,20 @@ router.delete('/:idProduct',async(req,res)=>{
         req.status(200).json(result);
     });
        
+});
+
+router.get("/search",async(req,res)=>{
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);  
+    let query=Product.find(JSON.parse(queryStr)).populate('subcategoryId');
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+   
+    const orders=await query;
+    res.status(200).json(orders);
 })
 
 
