@@ -38,10 +38,11 @@ router.post("/",validatonUser.checkValidUser,async(req,res)=>{
                 }
             }
 
-
-            jwt.sign(payload,Sercet_token,{expiresIn:3600},(error,token)=>{
+            //Change return in here
+            jwt.sign(payload,Sercet_token,{expiresIn:3600},async(error,token)=>{
                 if(error) throw error;
-                res.json({token});
+                const userfind= await User.findOne({email:email});
+                res.json({jwt:token,user:userfind});
             })
         }
         else

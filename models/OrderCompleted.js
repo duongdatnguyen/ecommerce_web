@@ -12,27 +12,6 @@ const OrderCompletedSchema=mongoose.Schema({
         type:Number,
         ref:"order"
     },
-    addressrecevie:{
-        city:{
-            type:String,
-            required:true,
-            min:3
-          },
-          district:{
-            type:String,
-            required:true,
-            min:3
-          },
-          ward: {
-            type: String,
-            required: true,
-          },
-          street:{
-            type:String,
-            required:true,
-            min:3
-          }
-    },
     shiprice:{
         type:Number,
         require:true
@@ -43,8 +22,9 @@ const OrderCompletedSchema=mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["Waiting","Shipping","Done"]
-    },
+        enum:["Waiting","Shipping","Done"],
+        default:"Waiting"
+    }
     
     
 });

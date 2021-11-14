@@ -1,8 +1,3 @@
-
-
-
-
-
 const express=require("express");
 const router=express.Router();
 const validationProduct = require("../../../midleware/validationProduct");
@@ -17,7 +12,7 @@ router.get("/paging",async(req,res)=>{
     const limit =req.query.limit;
     const skip=(page-1)*limit;
     const subcategoryId=req.query.subcategoryId;
-    let query=Product.find().populate('subcategoryId');
+    let query=Product.find({"status":true}).populate('subcategoryId');
     //Sort by brand by Category
     if(subcategoryId)
     {

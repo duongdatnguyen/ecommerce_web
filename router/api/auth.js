@@ -16,7 +16,7 @@ const sendEmail=require("../../services/sendMail");
  * Get get user with token
  */
 
- router.get("/",auth,async(req,res)=>{
+ router.get("/auth",auth,async(req,res)=>{
     try{
         const user=await User.findById(req.user.id).select('-password');
         res.json(user);
@@ -32,7 +32,7 @@ const sendEmail=require("../../services/sendMail");
  * email,password
  * Login with email, password
  */
-router.post("/",async(req,res)=>{
+router.post("/auth",async(req,res)=>{
    
         const {email,password}=req.body;
         try{

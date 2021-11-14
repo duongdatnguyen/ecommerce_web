@@ -42,6 +42,7 @@ router.post("/",auth,async(req,res)=>{
     orderAdd.userId=req.body.userId;
     orderAdd.totalPrice=req.body.totalPrice;
     orderAdd.items.unshift(...itemIds);
+    orderAdd.addressrecevie=JSON.stringify(req.body.addressrecevie);
     await orderAdd.save();
     return res.status(200).json(orderAdd);
 });
