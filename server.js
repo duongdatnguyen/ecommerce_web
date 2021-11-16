@@ -11,7 +11,7 @@ const categories=require("./router/api/category/Category");
 const subcategories=require("./router/api/category/SubCategory");
 const product=require("./router/api/product/product");
 const order=require("./router/api/orders/order");
-
+const ordercompleted=require("./router/api/orderComplete/orderComplete");
 
 const configPassport=require("./config/passport");
 const session=require("express-session");
@@ -33,7 +33,7 @@ app.use("/categories",categories);
 app.use("/subcategories",subcategories);
 app.use("/products",product);
 app.use("/orders",order);
-
+app.use("/ordercompletes",ordercompleted);
 
 const PORT=process.env.PORT||3000;
 

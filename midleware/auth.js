@@ -17,7 +17,6 @@ module.exports=function(req,res,next)
     }
     catch(error)
     {
-        console.log(error);
         return res.json({error:[{"msg":error}]});
     }
 };

@@ -22,7 +22,7 @@ const OrderCompletedSchema=mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["Waiting","Shipping","Done"],
+        enum:["Waiting","Shipping","Done","Failed"],
         default:"Waiting"
     }
     
@@ -33,6 +33,6 @@ const OrderCompletedSchema=mongoose.Schema({
 
 
 OrderCompletedSchema.plugin(autoIncrement.plugin,'OrderCompletedSchema');
-
+OrderCompletedSchema.set('timestamps', true);
 
 module.exports = mongoose.model('ordercompleted',OrderCompletedSchema);

@@ -24,7 +24,7 @@ const OrderSchema=mongoose.Schema({
     {
         type:String,
         default:'Pending',
-        enum : ['Pending','Process','Done','Cancel']
+        enum : ['Pending','Done','Cancel']
     },
     addressrecevie:{
         city:{
