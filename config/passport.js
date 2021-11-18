@@ -1,11 +1,12 @@
 const passport=require('passport');
 const strategy=require('passport-facebook');
 const User=require("../models/Users");
-const generate=require('generate-password');
-
-
+const generator=require('generate-password');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const configgoogle=require("./configGoogle");
+const bcrypt=require("bcrypt");
 const FacebookStrategy=strategy.Strategy;
-
+const sendEmail=require("../services/sendMail");
 const {facebook_key,facebook_secret,callback_url}=require("./configFacebook");
 
 
@@ -92,4 +93,55 @@ passport.deserializeUser(function(obj, done) {
 
 
 // ))
+      passport.use(new GoogleStrategy({
+        clientID: configgoogle.lientID,
+        clientSecret: configgoogle.clientSecret,
+        callbackURL: configgoogle.callbackURL
+      },
+      async function(accessToken, refreshToken, profile, done) {
 
+        const email = profile.emails[0].value;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+          if (!existingUser.facebookId) {
+            await User.findOneAndUpdate(
+              existingUser.id ,
+              {
+                $set: {
+                  googleId: profile.id,
+                },
+              }
+            );
+          }
+          return done(null, existingUser);
+        }
+        const newPassword = generator.generate({
+                                    length: 10,
+                                    numbers: true,
+                                  });
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+        const user = new User({
+          email: profile.emails[0].value,
+          password: hashPassword,
+          facebookId: profile.id,
+          fistname:profile._json.given_name,
+          lastname:profile._json.family_name,
+          role: "user",
+          status: true,
+        });
+        const message={ // thiết lập đối tượng, nội dung gửi mail
+          from: 'Ecomerrce tieu luan chuyen nganh',
+          to: "nguyenduongdat0308@gmail.com",
+          subject: 'Create new account',
+          text: "Tài khoản của bạn đã được đăng nhập vào website",
+          html: "<span>Bạn vừa đăng nhập nhập tài khoản bằng Google hoặc Facebook. Dưới đây là mật khẩu mới của bạn!" +
+          "</span> </br><h2>" +
+          newPassword +
+          "</h2>"
+      }
+      sendEmail(message);
+      const saveUser = await user.save();
+      done(null, saveUser);
+        }
+));

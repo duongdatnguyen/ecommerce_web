@@ -36,7 +36,8 @@ const UserSchema=new mongoose.Schema({
         gender:{
           type:String,
           required:true,
-          enum: ['Man', 'Female','None'],
+          enum: ['Men', 'Female','None'],
+          default:'Men',
           min:3
           
         },
@@ -78,6 +79,7 @@ const UserSchema=new mongoose.Schema({
         phonenumber:{
           type:String,
           required:true,
+          default:"0123456789",
           min:10
         },
         status:{

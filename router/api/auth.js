@@ -10,6 +10,7 @@ const auth = require("../../midleware/auth");
 const passport = require("passport");
 
 const sendEmail=require("../../services/sendMail");
+const AppError = require("../../models/AppError");
 
 /**GET
  * API '/'
@@ -67,7 +68,7 @@ router.post("/auth",async(req,res)=>{
                     // console.log(message);
                     // sendEmail(message);
 
-                const userfind=await User.findOne({email:email}).select("email role");
+                const userfind=await User.findOne({email:email}).select("-password");
                     res.json({jwt:token,user:userfind});
                 })
 
@@ -92,22 +93,35 @@ router.get("/auth/facebook",passport.authenticate('facebook',{scope:'email'}));
 
  router.get(
     "auth/facebook/callback",
-    passport.authenticate("facebook", {
-      successRedirect: "/auth/fail",
-      failureRedirect: "/auth/success",
-      failureFlash: true
-    })
-  );
+    passport.authenticate("facebook",
+    function(req,res)
+    {
+        if(!req.user)
+        {
+            return res.status(400).json(new AppError("Can't connect user"));
+        }
+        const payload={
+            user:
+            {id:req.user.id},
+        }
+
+        jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+            if(error) return  res.json({error:[{"msg":error}]});
+            console.log(token)
+            return res.status(200).json({jwt:token,user:req.user});
+        })
+    }
+  ));
 
 router.get("/auth/fail",(req, res) => {
     console.log("Failed attempt");
-    res.send("Failed attempt");
+    res.send();
   })
  
 
 router.get("/auth/success",(req, res) => {
-    console.log("Success");
-    res.send("Success");
+    console.log(req.user);
+    res.send("Sucess");
   })
 //  router.get("/auth/facebook/callback",passport.authenticate('facebook'),async(req,res)=>{
 //      const user=await User.findOne({'email':req.user.email});
@@ -131,5 +145,28 @@ router.get("/auth/success",(req, res) => {
 //          res.json({token});
 //      })
 //  });
+
+router.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile','email'] }));
+
+
+router.get('/auth/google/callback', 
+  passport.authenticate('google'),
+  function(req, res) {
+    if(!req.user)
+    {
+        return res.status(400).json(new AppError("Can't connect user"));
+    }
+    const payload={
+        user:
+        {id:req.user.id},
+    }
+
+    jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+        if(error) return  res.json({error:[{"msg":error}]});
+        return res.status(200).json({jwt:token,user:req.user});
+    })
+  });
+
 
 module.exports=router;

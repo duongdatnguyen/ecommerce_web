@@ -4,7 +4,6 @@ const nodemailer=require("nodemailer");
 
 
   module.exports = function(message) {
-      console.log("Going to email")
     const transport=nodemailer.createTransport({
         service: 'gmail',
         host: "smtp.gmail.com",
@@ -21,8 +20,7 @@ const nodemailer=require("nodemailer");
       if (error) {
         console.log(error);
       } else {
-        //Nếu thành công.
-        console.log("Kết nối thành công!");
+        //Nếu thành công
         //Tiến hành gửi email
         transport.sendMail(message,(error,infor)=>{
             if(error)
@@ -30,7 +28,6 @@ const nodemailer=require("nodemailer");
                 console.log(error);
                 res.status(400).json({"msg":"Email failed"});
             }
-            console.log(infor);
             res.status(200).json({"msg":"Email success"});
         });
       }

@@ -20,6 +20,7 @@ const SubCategorySchema=mongoose.Schema(
         },
         icon:{
             type:String,
+            default:""
         },
         date:{
             type: Date, default: Date.now

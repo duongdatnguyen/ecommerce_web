@@ -42,7 +42,7 @@ router.post("/",auth,async(req,res)=>{
     orderAdd.userId=req.body.userId;
     orderAdd.totalPrice=req.body.totalPrice;
     orderAdd.items.unshift(...itemIds);
-    orderAdd.addressrecevie=JSON.stringify(req.body.addressrecevie);
+    orderAdd.addressrecevie=req.body.addressrecevie;
     await orderAdd.save();
     return res.status(200).json(orderAdd);
 });
@@ -65,6 +65,7 @@ router.put("/:orderId",auth,async(req,res)=>{
     for(let i=0;i<items.length;i++)
     {
         const itemAdd= await ItemOrder.findById(items[i]._id);
+        console.log(items[i].quantity)
         itemAdd.quantity=items[i].quantity;
         itemAdd.totalPrice=items[i].totalPrice;
         await itemAdd.save();
@@ -84,13 +85,9 @@ router.delete("/:orderId",auth,secureAPi,async(req,res)=>{
         {
             return res.status(400).json(new AppError("Order is not exist"));
         }
-        Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}),(error,result)=>{
-                if(error)
-                {
-                    console.log(error);
-                }
-                return res.status(200).json(result);
-        });
+        Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}));
+        const orderResult=await Order.findById(req.params.orderId);
+        return res.status(200).json(orderResult);
 });
 
 router.get("/search",async(req,res)=>{

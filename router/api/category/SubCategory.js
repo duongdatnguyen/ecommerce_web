@@ -4,7 +4,8 @@ const AppError = require("../../../models/AppError");
 const Category = require("../../../models/Category");
 const SubCategory=require("../../../models/SubCategory");
 const router=express.Router();
-
+const multer=require("../../../services/multer");
+const cloudinary=require("../../../services/cloudinary");
 /**
  * Add New Category
  * 
@@ -173,5 +174,22 @@ router.get("/",async(req,res)=>{
     
 });
 
+/**
+ * Images
+ */
+ router.post("/images/:subcategoryId",multer.single("photo"),async(req,res)=>{
+    
+
+    const uploadCloud=async (path) => await cloudinary.uploads(path,"Images");
+    const subcategoryUpdate= await SubCategory.findById(req.params.subcategoryId);
+    if(!subcategoryUpdate)
+        {
+            return res.status(400).json(new AppError("SubCategory does not exist!!!"));
+        }
+    const newPath=await uploadCloud(req.file.path);
+    subcategoryUpdate.icon=newPath.url;
+    await subcategoryUpdate.save();
+    return res.status(200).json(subcategoryUpdate);
+})
 
 module.exports=router;

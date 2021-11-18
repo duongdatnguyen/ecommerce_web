@@ -8,6 +8,7 @@ const User=require("../../models/Users");
 const { body } = require("express-validator");
 const auth = require("../../midleware/auth");
 const passport = require("passport");
+const AppError = require("../../models/AppError");
 
 
 
@@ -71,7 +72,7 @@ router.get("/paging",async(req,res)=>{
     const limit =req.query.limit;
     const skip=(page-1)*limit;
     let query=User.find().select("-password");
-    query=query.skip(skip).limit(limit);
+    query=query.skip(parseInt(skip)).limit(parseInt(limit));
     if(req.query.page)
     {
         const numUsers=await User.countDocuments();
@@ -149,8 +150,8 @@ router.put("/update",auth,validatonUser.checkValidUser,async(req,res)=>{
                                                                         "lastname":lastname,
                                                                         "gender":gender,
                                                                         "phonenumber":phonenumber}});
-
-        res.json(result);
+        const userResult= await User.findById(req.user.id);
+        res.status(200).json(userResult);
 
     }
     catch(error){
@@ -158,6 +159,79 @@ router.put("/update",auth,validatonUser.checkValidUser,async(req,res)=>{
         res.status(400).json({error:[{"msg":error}]});
     }
     
+})
+
+
+router.put("/update/password",auth,async(req,res)=>{
+    const passwordOld=req.body.passwordOld;
+    const passwordNew=req.body.passwordNew;
+    try{
+        const user=await User.findById(req.user.id);
+        let isMatch=await bcrypt.compare(passwordOld,user.password);
+        if(!isMatch)
+        {
+            return res.status(400).json({error:[{msg:'Password incorrect'}]});
+        }
+
+        //Password New
+        const salt=await bcrypt.genSalt(10);
+        let passwordhashed=await bcrypt.hash(passwordNew,salt);
+        user.password=passwordhashed;
+        await user.save();
+
+            const payload={
+                user:{
+                    id:user.id,
+                }
+            }
+
+            //Change return in here
+            jwt.sign(payload,Sercet_token,{expiresIn:3600},async(error,token)=>{
+                if(error) throw error;
+                const userfind= await User.findById(req.user.id);
+                res.status(200).json({jwt:token,user:userfind});
+            })
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(500).json(new AppError(error));
+    }
+})
+
+router.put("/role",auth,async(req,res)=>{
+    const role=req.body.role;
+    try{
+        console.log(role);
+        const user= await User.findById(req.user.id);
+        if(!user)
+        {
+            res.status(400).json({error:[{"msg":"User doesn't exist"}]});
+        }
+        const result=await User.findByIdAndUpdate(req.user.id,{$set:{role:role}});
+
+        res.status(200).json(result);
+
+    }
+    catch(error){
+        console.log(error)
+        res.status(400).json({error:[{"msg":error}]});
+    }
+})
+
+
+router.get("/search",async(req,res)=>{
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);  
+    let query=User.find(JSON.parse(queryStr));
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+   
+    const users=await query;
+    res.status(200).json( users);
 })
 
 module.exports=router;

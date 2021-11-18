@@ -21,7 +21,6 @@ router.post("/",async(req,res)=>{
 
 
         const categoryExist= await Category.find({nameCategory:nameCategory});
-        console.log(categoryExist)
         if(categoryExist.length===1)
         {
             return res.status(400).json(new AppError("Category have exist"));

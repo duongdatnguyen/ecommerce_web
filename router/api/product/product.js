@@ -5,12 +5,12 @@ const Product = require("../../../models/Product");
 
 const AppError = require("../../../models/AppError");
 const multer=require("../../../services/multer");
-
+const cloudinary=require("../../../services/cloudinary");
 //Paging product to display
 router.get("/paging",async(req,res)=>{
-    const page=req.query.page*1||1;
-    const limit =req.query.limit;
-    const skip=(page-1)*limit;
+    let page=req.query.page*1||1;
+    let limit =req.query.limit;
+    let skip=(page-1)*limit;
     const subcategoryId=req.query.subcategoryId;
     let query=Product.find({"status":true}).populate('subcategoryId');
     //Sort by brand by Category
@@ -18,8 +18,7 @@ router.get("/paging",async(req,res)=>{
     {
         query.where("subcategoryId").equals(subcategoryId);
     }
-
-    query=query.skip(skip).limit(limit);
+    query=query.skip(parseInt(skip)).limit(parseInt(limit));
     if(req.query.page)
     {
         const numUsers=await Product.countDocuments();
@@ -38,12 +37,16 @@ router.get("/paging",async(req,res)=>{
 
 router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
     
+
+    const uploadCloud=async (path) => await cloudinary.uploads(path,"Images");
     const productUpdate= await Product.findById(req.params.productId);
     if(!productUpdate)
         {
             return res.status(400).json(new AppError("Product does not exist!!!"));
         }
-    productUpdate.images=req.file.path;
+    const newPath=await uploadCloud(req.file.path);
+    console.log(newPath);
+    productUpdate.images=newPath.url;
     await productUpdate.save();
     return res.status(200).json(productUpdate);
 })
@@ -69,16 +72,24 @@ router.post("/",validationProduct.checkvaliadtionProduct,async(req,res)=>{
 
 
 //Update Product
-router.put("/:productId",async(req,res)=>{
+router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=>{
             const productUpdate= await Product.findById(req.params.productId);
+            
             if(!productUpdate)
             {
                 res.status(400).json(new AppError("Product haven't exist!!!"));
             }
-            const productChange=new Product(req.body);
-
-            const result=await Product.updateOne(productUpdate,productChange);
-            res.status(200).json(result);
+            const {name,orgin,material,description,price}=req.body;
+            await Product.findByIdAndUpdate(req.params.productId,{$set:{
+                                                                                "name": name,
+                                                                                "orgin": orgin,
+                                                                                "material": material,
+                                                                                "description":  description,
+                                                                                "price": price 
+                                                                            }});
+            const productResult= await Product.findById(req.params.productId);
+            res.status(200).json(productResult);
+            
 
 });
 
@@ -110,18 +121,19 @@ router.delete('/:idProduct',async(req,res)=>{
        
 });
 
-router.get("/search",async(req,res)=>{
+router.get("/",async(req,res)=>{
     const queryObj={...req.query};
+    
     let queryStr=JSON.stringify(queryObj);  
-    let query=Product.find(JSON.parse(queryStr)).populate('subcategoryId');
+    let query=Product.find(JSON.parse(queryStr)).populate("subcategoryId");
     if(req.query.sort)
     {
         query=query.sort(req.query.sort);
 
     }
    
-    const orders=await query;
-    res.status(200).json(orders);
+    const products=await query;
+    res.status(200).json(products);
 })
 
 
