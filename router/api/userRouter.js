@@ -106,6 +106,32 @@ router.get("/getbyId/:idUser",async(req,res)=>{
 
 
 
+router.put("/updatewithAdmin/:userId",auth,async(req,res)=>{
+    const {fistname,lastname,role,status,date,month,gender,phonenumber}=req.body;
+    try{
+        const user= await User.findById(req.params.userId);
+        if(!user)
+        {
+            res.status(400).json({error:[{"msg":"User doesn't exist"}]});
+        }
+        const result=await User.findByIdAndUpdate(req.user.id,{$set:{"fistname":fistname,
+                                                                        "lastname":lastname,
+                                                                        "gender":gender,
+                                                                        "role":role,
+                                                                        "status":status,
+                                                                        "date":date,
+                                                                        "month":month,
+                                                                        "phonenumber":phonenumber}});
+        const userResult= await User.findById(req.user.id);
+        res.status(200).json(userResult);
+
+    }
+    catch(error)
+    {
+        res.status(400).json(new AppError(error));
+    }
+})
+
 
 /**Delete user but will have protect
  * No update email. Phone number can update but I have some features about sms token 
