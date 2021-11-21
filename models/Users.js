@@ -44,7 +44,7 @@ const UserSchema=new mongoose.Schema({
         role:{
           type:String,
           required:true,
-          enum: ['user','admin','superadmin'],
+          enum: ['user','admin','superadmin','none'],
           default:'user',
           min:3
           

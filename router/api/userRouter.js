@@ -9,7 +9,7 @@ const { body } = require("express-validator");
 const auth = require("../../midleware/auth");
 const passport = require("passport");
 const AppError = require("../../models/AppError");
-
+const secureApi=require("../../midleware/secureAPi");
 
 
 //api/users
@@ -251,6 +251,50 @@ router.get("/search",async(req,res)=>{
     const users=await query;
     res.status(200).json( users);
 })
+
+
+router.post("/admin/register",auth,async(req,res)=>{
+
+
+    const {fistname,lastname,email,gender,password,phonenumber}=req.body;
+    try{
+        const user= await User.findOne({email:email});
+        if(!user)
+        {
+            const salt=await bcrypt.genSalt(10);
+            let passwordhashed=await bcrypt.hash(password,salt);
+
+            const useradd=new User({fistname,lastname,email,gender,password,phonenumber});
+            useradd.password=passwordhashed;
+            useradd.role='none';
+            await useradd.save();
+
+            const payload={
+                user:{
+                    id:useradd.id,
+                }
+            }
+
+            //Change return in here
+            jwt.sign(payload,Sercet_token,{expiresIn:3600},async(error,token)=>{
+                if(error) throw error;
+                const userfind= await User.findOne({email:email});
+                res.json({jwt:token,user:userfind});
+            })
+        }
+        else
+        {
+            res.status(400).json({error:[{"msg":"User have exist"}]});
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(500).json({error:[{"msg":"Server errors"}]});
+    }
+    
+});
+
 
 module.exports=router;
 
