@@ -256,7 +256,7 @@ router.get("/search",async(req,res)=>{
 router.post("/admin/register",auth,async(req,res)=>{
 
 
-    const {fistname,lastname,email,gender,password,phonenumber}=req.body;
+    const {fistname,lastname,email,gender,password,phonenumber,role}=req.body;
     try{
         const user= await User.findOne({email:email});
         if(!user)
@@ -264,11 +264,9 @@ router.post("/admin/register",auth,async(req,res)=>{
             const salt=await bcrypt.genSalt(10);
             let passwordhashed=await bcrypt.hash(password,salt);
 
-            const useradd=new User({fistname,lastname,email,gender,password,phonenumber});
+            const useradd=new User({fistname,lastname,email,gender,password,phonenumber,role});
             useradd.password=passwordhashed;
-            useradd.role='none';
             await useradd.save();
-
             const payload={
                 user:{
                     id:useradd.id,
