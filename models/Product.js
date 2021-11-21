@@ -45,6 +45,11 @@ const ProductSchema=mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      content:{
+        type:String,
+        enum:["New","Old","Sale Off"],
+        default:"New"
+      }
 });
 
 ProductSchema.plugin(autoIncrement.plugin,'ProductSchema');

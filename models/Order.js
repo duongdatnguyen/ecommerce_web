@@ -27,25 +27,38 @@ const OrderSchema=mongoose.Schema({
         enum : ['Pending','Done','Cancel']
     },
     addressrecevie:{
-        city:{
-            type:String,
-            required:true,
-            min:3
-          },
-          district:{
-            type:String,
-            required:true,
-            min:3
-          },
-          ward: {
-            type: String,
-            required: true,
-          },
-          street:{
-            type:String,
-            required:true,
-            min:3
-          }
+        name:
+        {
+          type:String,
+          min:3,
+        },
+        phonenumber:
+        {
+          type:String,
+        },
+        address:{
+          type:String,
+          default:true
+        },
+        // city:{
+        //     type:String,
+        //     required:true,
+        //     min:3
+        //   },
+        //   district:{
+        //     type:String,
+        //     required:true,
+        //     min:3
+        //   },
+        //   ward: {
+        //     type: String,
+        //     required: true,
+        //   },
+        //   street:{
+        //     type:String,
+        //     required:true,
+        //     min:3
+        //   }
     }
 });
 
