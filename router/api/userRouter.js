@@ -137,18 +137,15 @@ router.put("/updatewithAdmin/:userId",auth,async(req,res)=>{
  * No update email. Phone number can update but I have some features about sms token 
  * 
  */
-router.delete("/:userid",async(req,res)=>{
-    const userdelete=await User.findById({id:req.body.userid});
+router.delete("/admin/:userid",async(req,res)=>{
+    const userdelete=await User.findById(req.params.userid);
     if(!userdelete)
     {
-        User.findByIdAndUpdate(req.body.userid,{status:false},(error,user)=>{
-            if(error) throw error;
-            else
-            {
-                res.json({msg:"User have deleted"});
-            }
-        })
+        res.status(400).json(new AppError("User is null"));
     }
+        await User.findByIdAndUpdate(req.params.userid,{$set:{status:false}});
+        const result=await User.findById(req.params.userid);
+        res.status(200).json(result);
 })
 
 /**
