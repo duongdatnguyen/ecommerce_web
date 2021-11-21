@@ -90,22 +90,17 @@ router.get("/paging",async(req,res)=>{
  * 
  * Sort buy gender
  */
-router.get("/",async(req,res)=>{
-    const queryObj={...res.query};
-    let queryStr=JSON.stringify(queryObj);
+router.get("/:idUser",async(req,res)=>{
 
-
-
-    let query=User.find(JSON.parse(queryStr)).select("-password");
-    console.log(query);
-    if(req.query.sort)
+    const userFind=await User.findById(req.params.idUser).select("-password");
+    if(!userFind)
     {
-        query=query.sort(req.query.sort);
+        res.status(400).json({error:[{"msg":"User have exist"}]});
 
     }
     
-    const users=await query;
-    res.json(users);
+   
+    res.status(200).json(userFind);
 
 })
 
