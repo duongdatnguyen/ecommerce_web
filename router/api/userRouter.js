@@ -90,7 +90,7 @@ router.get("/paging",async(req,res)=>{
  * 
  * Sort buy gender
  */
-router.get("/:idUser",async(req,res)=>{
+router.get("/getbyId/:idUser",async(req,res)=>{
 
     const userFind=await User.findById(req.params.idUser).select("-password");
     if(!userFind)
