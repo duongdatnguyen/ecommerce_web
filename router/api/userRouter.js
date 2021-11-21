@@ -114,7 +114,7 @@ router.put("/updatewithAdmin/:userId",auth,async(req,res)=>{
         {
             res.status(400).json({error:[{"msg":"User doesn't exist"}]});
         }
-        const result=await User.findByIdAndUpdate(req.user.id,{$set:{"fistname":fistname,
+        const result=await User.findByIdAndUpdate(req.params.userId,{$set:{"fistname":fistname,
                                                                         "lastname":lastname,
                                                                         "gender":gender,
                                                                         "role":role,
@@ -122,7 +122,7 @@ router.put("/updatewithAdmin/:userId",auth,async(req,res)=>{
                                                                         "date":date,
                                                                         "month":month,
                                                                         "phonenumber":phonenumber}});
-        const userResult= await User.findById(req.user.id);
+        const userResult= await User.findById(req.params.userId);
         res.status(200).json(userResult);
 
     }

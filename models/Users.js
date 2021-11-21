@@ -36,7 +36,7 @@ const UserSchema=new mongoose.Schema({
         gender:{
           type:String,
           required:true,
-          enum: ['Men', 'Female','None'],
+          enum: ['Male', 'Female','None'],
           default:'Men',
           min:3
           
@@ -86,6 +86,12 @@ const UserSchema=new mongoose.Schema({
           type:Boolean,
           required:true,
           default:true
+        },
+        date:{
+          type:String,
+        },
+        month:{
+          type:String,
         }
 
 });
