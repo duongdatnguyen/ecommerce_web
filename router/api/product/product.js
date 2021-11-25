@@ -12,8 +12,19 @@ router.get("/paging",async(req,res)=>{
     let limit =req.query.limit;
     let skip=(page-1)*limit;
     const subcategoryId=req.query.subcategoryId;
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);
+
+
     let query=Product.find({"status":true}).populate('subcategoryId');
     //Sort by brand by Category
+    query=query.find(JSON.parse(queryStr));
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+    
     if(subcategoryId)
     {
         query.where("subcategoryId").equals(subcategoryId);
@@ -45,7 +56,7 @@ router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
             return res.status(400).json(new AppError("Product does not exist!!!"));
         }
     const newPath=await uploadCloud(req.file.path);
-    console.log(newPath);
+    console.log(req.file.path);
     productUpdate.images=newPath.url;
     await productUpdate.save();
     return res.status(200).json(productUpdate);

@@ -71,7 +71,9 @@ router.get("/paging",async(req,res)=>{
     const page=req.query.page*1||1;
     const limit =req.query.limit;
     const skip=(page-1)*limit;
-    let query=User.find().select("-password");
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);
+    let query=User.find(JSON.parse(queryStr)).select("-password");
     query=query.skip(parseInt(skip)).limit(parseInt(limit));
     if(req.query.page)
     {

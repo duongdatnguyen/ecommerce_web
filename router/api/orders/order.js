@@ -7,6 +7,8 @@ const AppError=require("../../../models/AppError");
 const Users = require("../../../models/Users");
 const ItemOrder = require("../../../models/ItemOrder");
 const secureAPi = require("../../../midleware/secureAPi");
+const paypal=require("../../../services/payment");
+
 
 router.get("/",auth,async(req,res)=>{
     const orders=await Order.find({"userId":req.user.id,"status":"Pending"}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
@@ -103,6 +105,37 @@ router.get("/search",async(req,res)=>{
     const orders=await query;
     res.status(200).json(orders);
 })
+
+router.get("/paging",async(req,res)=>{
+    let page=req.query.page*1||1;
+    let limit =req.query.limit;
+    let skip=(page-1)*limit;
+    const queryObj={...req.query};
+    let queryStr=JSON.stringify(queryObj);
+    //const subcategoryId=req.query.subcategoryId;
+    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    query=query.skip(parseInt(skip)).limit(parseInt(limit));
+    
+
+
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+    if(req.query.page)
+    {
+        const numUsers=await Order.countDocuments();
+        if(skip>numUsers)
+        {
+            res.status(400).json({error:[{"msg":"This page is not exist"}]});
+        }
+
+    }
+    const ordercompletes=await query;
+    res.status(200).json(ordercompletes);
+})
+
 
 
 module.exports=router;
