@@ -90,13 +90,15 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
             {
                 res.status(400).json(new AppError("Product haven't exist!!!"));
             }
-            const {name,orgin,material,description,price}=req.body;
+            const {name,orgin,material,description,price,subcategoryId,status}=req.body;
             await Product.findByIdAndUpdate(req.params.productId,{$set:{
                                                                                 "name": name,
                                                                                 "orgin": orgin,
                                                                                 "material": material,
                                                                                 "description":  description,
-                                                                                "price": price 
+                                                                                "price": price ,
+                                                                                "subcategoryId":subcategoryId,
+                                                                                "status":status
                                                                             }});
             const productResult= await Product.findById(req.params.productId);
             res.status(200).json(productResult);

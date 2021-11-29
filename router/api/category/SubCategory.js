@@ -21,7 +21,7 @@ const cloudinary=require("../../../services/cloudinary");
             return res.status(400).json(new AppError("Subcategory have exist"));
         }
         const subCategory=new SubCategory(req.body);
-        //subCategory.categoryID=category._id;
+        subCategory.categoryID=category._id;
         await subCategory.save(async(error,result)=>{
             if(error)
             {
@@ -51,7 +51,7 @@ const cloudinary=require("../../../services/cloudinary");
 router.put("/:subcateogoryId",async(req,res)=>{
     try
     {
-        const categoryId=req.params.subcateogoryId;
+        const subcateogoryId=req.params.subcateogoryId;
 
 
         const SubcategoryExist=await SubCategory.findById(subcateogoryId);
@@ -60,11 +60,32 @@ router.put("/:subcateogoryId",async(req,res)=>{
         {
             return res.status(400).json(new AppError("Sub Category haven't exist"));
         }
-        SubcategoryExist.nameSubCategory=req.body.nameSubCategory;
+        
+        console.log(SubcategoryExist.categoryID)
+        const categoryOld=await Category.findById(SubcategoryExist.categoryID);
+        if(categoryOld.id==req.body.categoryID)
+        {
+            
+            SubcategoryExist.nameSubCategory=req.body.nameSubCategory;
+            SubcategoryExist.categoryID=req.body.categoryID;
+            console.log(SubcategoryExist.nameSubCategory);
+            await SubcategoryExist.save();
+            res.status(200).json(SubcategoryExist);
+        }
+        else
+        {
+            SubcategoryExist.nameSubCategory=req.body.nameSubCategory;
+            const categoryNew=await Category.findById(req.body.categoryID);
 
-        await categoryExist.save();
-
-        res.json(categoryExist);
+            categoryNew.subcategories.unshift(SubcategoryExist.id);
+            await categoryNew.save();
+            const removeIndex=categoryOld.subcategories.map(item=>item.id).indexOf(SubcategoryExist.id);
+            categoryOld.subcategories.splice(removeIndex,1);
+            await categoryOld.save();
+            await SubcategoryExist.save();
+            res.status(200).json(SubcategoryExist);
+        }
+        
     }
     catch(error)
     {
@@ -87,7 +108,7 @@ router.put("/:subcateogoryId",async(req,res)=>{
         const subcateogoryId=req.params.subcateogoryId;
 
 
-        const SubcategoryExist=await SubCategory.findById(subcateogoryId).populate("categoryID");
+        const SubcategoryExist=await SubCategory.findById(subcateogoryId).populate("categoryID").select("nameCategory status");
     
         if(!SubcategoryExist)
         {

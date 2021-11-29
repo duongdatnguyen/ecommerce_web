@@ -11,7 +11,7 @@ const paypal=require("../../../services/payment");
 
 
 router.get("/",auth,async(req,res)=>{
-    const orders=await Order.find({"userId":req.user.id,"status":"Pending"}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    const orders=await Order.find({"userId":req.user.id,"status":"Pending"}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(orders.length===0)
     {
         return res.status(400).json(orders).json(new AppError("No Order is pending"));
@@ -74,7 +74,7 @@ router.put("/:orderId",auth,async(req,res)=>{
     }
     orderUpdate.totalPrice=req.body.totalPrice;
     await orderUpdate.save();
-    const order=await Order.findById(orderUpdate._id).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    const order=await Order.findById(orderUpdate._id).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     return res.status(200).json(order);
 })
 
@@ -92,10 +92,22 @@ router.delete("/:orderId",auth,secureAPi,async(req,res)=>{
         return res.status(200).json(orderResult);
 });
 
+router.get("/getById/:OrderId",async(req,res)=>{
+    let query=Order.findById(req.params.OrderId).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
+    if(req.query.sort)
+    {
+        query=query.sort(req.query.sort);
+
+    }
+   
+    const orders=await query;
+    res.status(200).json(orders);
+})
+
 router.get("/search",async(req,res)=>{
     const queryObj={...req.query};
     let queryStr=JSON.stringify(queryObj);  
-    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(req.query.sort)
     {
         query=query.sort(req.query.sort);
