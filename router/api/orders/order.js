@@ -125,7 +125,7 @@ router.get("/paging",async(req,res)=>{
     const queryObj={...req.query};
     let queryStr=JSON.stringify(queryObj);
     //const subcategoryId=req.query.subcategoryId;
-    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+    let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     query=query.skip(parseInt(skip)).limit(parseInt(limit));
     
 
