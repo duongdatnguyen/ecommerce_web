@@ -59,6 +59,10 @@ const OrderSchema=mongoose.Schema({
         //     required:true,
         //     min:3
         //   }
+    },
+    address:{
+        type:String,
+
     }
 });
 

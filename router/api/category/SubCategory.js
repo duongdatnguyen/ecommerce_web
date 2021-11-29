@@ -61,31 +61,38 @@ router.put("/:subcateogoryId",async(req,res)=>{
             return res.status(400).json(new AppError("Sub Category haven't exist"));
         }
         
-        console.log(SubcategoryExist.categoryID)
+
         const categoryOld=await Category.findById(SubcategoryExist.categoryID);
-        if(categoryOld.id==req.body.categoryID)
+    
+        if(categoryOld.id===req.body.categoryID)
         {
-            
-            SubcategoryExist.nameSubCategory=req.body.nameSubCategory;
-            SubcategoryExist.categoryID=req.body.categoryID;
-            console.log(SubcategoryExist.nameSubCategory);
+            SubcategoryExist.namesubCategory=req.body.namesubCategory;
             await SubcategoryExist.save();
-            res.status(200).json(SubcategoryExist);
+            return res.status(200).json(SubcategoryExist);
         }
+           
         else
         {
-            SubcategoryExist.nameSubCategory=req.body.nameSubCategory;
+            SubcategoryExist.namesubCategory=req.body.namesubCategory;
+            SubcategoryExist.categoryID=req.body.categoryID;
             const categoryNew=await Category.findById(req.body.categoryID);
 
             categoryNew.subcategories.unshift(SubcategoryExist.id);
+            
             await categoryNew.save();
-            const removeIndex=categoryOld.subcategories.map(item=>item.id).indexOf(SubcategoryExist.id);
+            let removeIndex;
+            for(let i=0;i<categoryOld.subcategories.length;i++)
+            {
+                if(categoryOld.subcategories[i].id=== SubcategoryExist.id)
+                {
+                    removeIndex=i;
+                }
+            }
             categoryOld.subcategories.splice(removeIndex,1);
             await categoryOld.save();
             await SubcategoryExist.save();
-            res.status(200).json(SubcategoryExist);
+            return res.status(200).json(SubcategoryExist);
         }
-        
     }
     catch(error)
     {
@@ -108,7 +115,7 @@ router.put("/:subcateogoryId",async(req,res)=>{
         const subcateogoryId=req.params.subcateogoryId;
 
 
-        const SubcategoryExist=await SubCategory.findById(subcateogoryId).populate("categoryID").select("nameCategory status");
+        const SubcategoryExist=await SubCategory.findById(subcateogoryId).populate("categoryID");
     
         if(!SubcategoryExist)
         {
