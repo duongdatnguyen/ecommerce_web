@@ -122,12 +122,13 @@ router.delete('/:idProduct',async(req,res)=>{
         {
             res.status(400).json(new AppError("Product haven't exist"));
         }
-    const result =Product.findByIdAndUpdate(req.params.idProduct,{ $set: { status: false }},(result,error)=>{
+    const result =Product.findByIdAndUpdate(req.params.idProduct,{ $set: { status: false }},(error,result)=>{
         if(error)
         {
+            console.log(error)
             res.status(400).json(new AppError(error));
         }
-        req.status(200).json(result);
+        res.status(200).json(result);
     });
        
 });
