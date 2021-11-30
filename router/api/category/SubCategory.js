@@ -191,7 +191,7 @@ router.get("/",async(req,res)=>{
     try
     {
        
-        const subcateogries=await SubCategory.find({status:true}).sort({date:1});
+        const subcateogries=await SubCategory.find({status:true}).populate("categoryID").sort({date:1});
         res.status(200).json(subcateogries);
     }
     catch(error)
