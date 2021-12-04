@@ -16,7 +16,7 @@ router.get("/paging",async(req,res)=>{
     let queryStr=JSON.stringify(queryObj);
 
 
-    let query=Product.find({"status":true}).populate('subcategoryId');
+    let query=Product.find().populate('subcategoryId');
     //Sort by brand by Category
     query=query.find(JSON.parse(queryStr));
     if(req.query.sort)
