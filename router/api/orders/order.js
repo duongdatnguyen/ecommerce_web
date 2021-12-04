@@ -45,6 +45,7 @@ router.post("/",auth,async(req,res)=>{
     orderAdd.totalPrice=req.body.totalPrice;
     orderAdd.items.unshift(...itemIds);
     orderAdd.addressrecevie=req.body.addressrecevie;
+    orderAdd.address=req.body.address;
     await orderAdd.save();
     return res.status(200).json(orderAdd);
 });
@@ -80,7 +81,9 @@ router.put("/:orderId",auth,async(req,res)=>{
 
 
 
-router.delete("/:orderId",auth,secureAPi,async(req,res)=>{
+
+
+router.delete("/:orderId",auth,async(req,res)=>{
         const orderId=req.params.orderId;
         const orderDelete=await Order.findById(orderId);
         if(!orderDelete)

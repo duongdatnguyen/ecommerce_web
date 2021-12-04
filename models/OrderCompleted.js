@@ -22,8 +22,7 @@ const OrderCompletedSchema=mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["Waiting","Shipping","Done","Failed"],
-        default:"Waiting"
+        enum:["Done","Failed"]
     }
     
     
