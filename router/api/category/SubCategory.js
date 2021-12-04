@@ -64,9 +64,10 @@ router.put("/:subcateogoryId",async(req,res)=>{
 
         const categoryOld=await Category.findById(SubcategoryExist.categoryID);
     
-        if(categoryOld.id===req.body.categoryID)
+        if(categoryOld.id==req.body.categoryID)
         {
             SubcategoryExist.namesubCategory=req.body.namesubCategory;
+            SubcategoryExist.substatus=req.body.substatus;
             await SubcategoryExist.save();
             return res.status(200).json(SubcategoryExist);
         }
@@ -75,20 +76,30 @@ router.put("/:subcateogoryId",async(req,res)=>{
         {
             SubcategoryExist.namesubCategory=req.body.namesubCategory;
             SubcategoryExist.categoryID=req.body.categoryID;
+            SubcategoryExist.substatus=req.body.substatus;
             const categoryNew=await Category.findById(req.body.categoryID);
 
             categoryNew.subcategories.unshift(SubcategoryExist.id);
             
             await categoryNew.save();
             let removeIndex;
-            for(let i=0;i<categoryOld.subcategories.length;i++)
+            removeIndex=categoryOld.subcategories.map(item=>item.id).indexOf(req.params.addressid);
+            // for(let i=0;i<categoryOld.subcategories.length;i++)
+            // {
+            //     if(categoryOld.subcategories[i].id== SubcategoryExist.id)
+            //     {
+            //         console.log(categoryOld.subcategories.length);
+                   
+            //         removeIndex=i;
+                    
+            //     }
+            // }
+            console.log(removeIndex);
+            if(removeIndex!=undefined)
             {
-                if(categoryOld.subcategories[i].id=== SubcategoryExist.id)
-                {
-                    removeIndex=i;
-                }
+                categoryOld.subcategories.splice(removeIndex,1);
             }
-            categoryOld.subcategories.splice(removeIndex,1);
+            
             await categoryOld.save();
             await SubcategoryExist.save();
             return res.status(200).json(SubcategoryExist);

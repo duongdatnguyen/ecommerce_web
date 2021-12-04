@@ -46,9 +46,7 @@ const ProductSchema=mongoose.Schema({
         default: Date.now,
       },
       content:{
-        type:String,
-        enum:["New","Old","Sale Off"],
-        default:"New"
+        type:String
       }
 });
 
