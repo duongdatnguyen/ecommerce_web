@@ -132,7 +132,7 @@ passport.deserializeUser(function(obj, done) {
         });
         const message={ // thiết lập đối tượng, nội dung gửi mail
           from: 'Ecomerrce tieu luan chuyen nganh',
-          to: "nguyenduongdat0308@gmail.com",
+          to: user.email,
           subject: 'Create new account',
           text: "Tài khoản của bạn đã được đăng nhập vào website",
           html: "<span>Bạn vừa đăng nhập nhập tài khoản bằng Google hoặc Facebook. Dưới đây là mật khẩu mới của bạn!" +
