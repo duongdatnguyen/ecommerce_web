@@ -47,6 +47,9 @@ const ProductSchema=mongoose.Schema({
       },
       content:{
         type:String
+      },
+      quantity:{
+        type:Number
       }
 });
 

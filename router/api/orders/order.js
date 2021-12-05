@@ -8,7 +8,8 @@ const Users = require("../../../models/Users");
 const ItemOrder = require("../../../models/ItemOrder");
 const secureAPi = require("../../../midleware/secureAPi");
 const paypal=require("../../../services/payment");
-
+const sendEmail=require("../../../services/sendMail");
+const Product = require("../../../models/Product");
 
 router.get("/",auth,async(req,res)=>{
     const orders=await Order.find({"userId":req.user.id,"status":"Pending"}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
@@ -32,11 +33,14 @@ router.post("/",auth,async(req,res)=>{
         return res.status(400).json(new AppError("No item order"));
     }
     let itemIds=[];
-    console.log(items);
         for(let i=0;i<items.length;i++)
         {
-            console.log(items[i]);
             const itemAdd=new ItemOrder(items[i]);
+            const product= await Product.findById(items[i].productId);
+            if(product.quantity<items[i].quantity)
+            {
+                return res.status(400).json(new AppError(`Product id ${items[i].productId} out of stock `));
+            }
             await itemAdd.save();
             itemIds.unshift(itemAdd._id);
         }
@@ -47,6 +51,15 @@ router.post("/",auth,async(req,res)=>{
     orderAdd.addressrecevie=req.body.addressrecevie;
     orderAdd.address=req.body.address;
     await orderAdd.save();
+    const message={ // thiết lập đối tượng, nội dung gửi mail
+        from: 'Ecomerce web',
+        to: userOrder.email,
+        subject: 'Order success',
+        text: "You recieved message from",
+        html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
+    }
+    sendEmail(message);
+    // console.log(message);
     return res.status(200).json(orderAdd);
 });
 

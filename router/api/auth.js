@@ -59,14 +59,14 @@ router.post("/auth",async(req,res)=>{
                 jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
                     if(error) return  res.json({error:[{"msg":error}]});
                     const message={ // thiết lập đối tượng, nội dung gửi mail
-                        from: 'Thanh Batmon',
-                        to: 'nguyenduongdat0308@gmail.com',
-                        subject: 'Test Nodemailer',
+                        from: 'Ecomerce web',
+                        to: user.email,
+                        subject: 'Register success',
                         text: "You recieved message from",
-                        html: "<p>You have got a new message<p>"
+                        html: "<p>you have register via email to web ecomerce<p>"
                     }
                     // console.log(message);
-                    // sendEmail(message);
+                    sendEmail(message);
 
                 const userfind=await User.findOne({email:email}).select("-password");
                     res.json({jwt:token,user:userfind});
