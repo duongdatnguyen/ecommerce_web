@@ -41,6 +41,8 @@ router.post("/",auth,async(req,res)=>{
             {
                 return res.status(400).json(new AppError(`Product id ${items[i].productId} out of stock `));
             }
+            product.quantity=product.quantity-items[i].quantity;
+            await product.save();
             await itemAdd.save();
             itemIds.unshift(itemAdd._id);
         }
