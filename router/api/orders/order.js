@@ -12,7 +12,7 @@ const sendEmail=require("../../../services/sendMail");
 const Product = require("../../../models/Product");
 
 router.get("/",auth,async(req,res)=>{
-    const orders=await Order.find({"userId":req.user.id,"status":"Pending"}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
+    const orders=await Order.find({"userId":req.user.id}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(orders.length===0)
     {
         return res.status(400).json(orders).json(new AppError("No Order is pending"));

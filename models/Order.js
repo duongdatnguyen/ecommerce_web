@@ -63,6 +63,9 @@ const OrderSchema=mongoose.Schema({
     address:{
         type:String,
 
+    },
+    paymentId:{
+        type:String
     }
 });
 
