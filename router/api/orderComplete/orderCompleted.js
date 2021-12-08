@@ -8,15 +8,15 @@ const router=express.Router();
 
 router.post("/",async(req,res)=>{
     const ordercompletedExist=await OrderCompleted.findOne({orderId:req.body.orderId});
-    if(!ordercompletedExist)
+    if(ordercompletedExist)
     {
-        res.status(400).json(new AppError("Order haven't exist"));
+        return res.status(400).json(new AppError("Order have exist"));
     }
     const orderAdd=new OrderCompleted(req.body);
     await Order.findByIdAndUpdate(req.body.orderId,{ $set: { status: 'Done'}});
     await orderAdd.save();
     const orderCompleteResult=await OrderCompleted.findOne({orderId:req.body.orderId}).populate("orderId");
-    res.status(200).json({orderComplete:orderCompleteResult});
+    return res.status(200).json({orderComplete:orderCompleteResult});
 });
 //populate: { path: "productId", select: ["name", "price"]
 router.get("/getOrder/:id",async(req,res)=>{
@@ -36,9 +36,9 @@ router.get("/getOrder/:id",async(req,res)=>{
  */
 router.put("/status/:id",async(req,res)=>{
     const ordercompletedExist=await OrderCompleted.findById(req.params.id);
-    if(ordercompletedExist)
+    if(!ordercompletedExist)
     {
-        res.status(400).json(new AppError("Order have exist"));
+        res.status(400).json(new AppError("Order haven't exist"));
     }
     const orderResult=await OrderCompleted.findByIdAndUpdate((req.params.id,{ $set: { status: req.body.status}}));
     res.status(200).json(orderResult);
