@@ -5,5 +5,5 @@ module.exports={
 }
 /**http://localhost:3000/auth/google/callback
  * 
- * https://tlcnfashionwebsite.herokuapp.com/
+ * https://tlcnfashionwebsite.herokuapp.com/auth/google/callback
  */
