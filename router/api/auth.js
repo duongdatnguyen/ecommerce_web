@@ -253,7 +253,6 @@ router.post("/googlelogin",async(req,res)=>{
           "</h2>"
       }
       sendEmail(message);
-      errorResult="Going to send email";
       const saveUser = await user.save();
       const payload={
         user:
@@ -267,6 +266,7 @@ router.post("/googlelogin",async(req,res)=>{
    }
    catch(error)
    {
+       console.log(error);
     return res.status(400).json(new AppError(errorResult));
    }
 })
