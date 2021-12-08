@@ -22,7 +22,8 @@ const OrderCompletedSchema=mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["Done","Failed"]
+        enum:["Waitting","Done","Failed"],
+        default:"Waitting"
     }
     
     
