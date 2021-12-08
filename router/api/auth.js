@@ -200,7 +200,7 @@ async function verifyGoogle(token) {
 router.post("/googlelogin",async(req,res)=>{
     const {tokenId}=req.body.tokenId;
     let errorResult="";
-   try{
+  
     let result = await verifyGoogle(tokenId);
 
     const email = result.email;
@@ -226,6 +226,8 @@ router.post("/googlelogin",async(req,res)=>{
                     return res.status(200).json({jwt:token,user:existingUser});
                 })
         }
+        else
+        {
         const newPassword = generator.generate({
                                     length: 10,
                                     numbers: true,
@@ -264,12 +266,8 @@ router.post("/googlelogin",async(req,res)=>{
         return res.status(200).json({jwt:token,user:saveUser});
     })
    }
-   catch(error)
-   {
-       console.log(error);
-    return res.status(400).json(error);
-   }
-})
+}
+)
 
 
 
