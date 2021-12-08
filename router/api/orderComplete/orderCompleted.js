@@ -15,14 +15,25 @@ router.post("/",async(req,res)=>{
     const orderAdd=new OrderCompleted(req.body);
     await Order.findByIdAndUpdate(req.body.orderId,{ $set: { status: 'Done'}});
     await orderAdd.save();
-    const orderCompleteResult=await OrderCompleted.findOne({orderId:req.body.orderId}).populate({path:"orderId",populate: { path: "userId", select: ["fistname", "lastname","email"]
-                                                                                                    ,path:"items", select:["productId","quantity","totalPrice"],populate: { path: "productId", select: ["name", "price"]  }}});
+    const orderCompleteResult=await OrderCompleted.findOne({orderId:req.body.orderId}).populate({path:"orderId",populate: {
+                                                                                                    path:"items", select:["productId","quantity","totalPrice"]
+                                                                                                    ,populate: { path: "productId", select: ["name", "price"]
+                                                                                                    
+                                                                                                }}
+                                                                                            }).populate({path:"orderId",populate: {
+                                                                                                path: "userId", select: ["fistname", "lastname","email"]}});
     return res.status(200).json({orderComplete:orderCompleteResult});
 });
 //populate: { path: "productId", select: ["name", "price"]
+// path: "userId", select: ["fistname", "lastname","email"]
 router.get("/getOrder/:id",async(req,res)=>{
-    const ordercompletedExist=await OrderCompleted.findById(req.params.id).populate({path:"orderId",populate: { path: "userId", select: ["fistname", "lastname","email"]
-                                                                                    ,path:"items", select:["productId","quantity","totalPrice"],populate: { path: "productId", select: ["name", "price"]  }}});
+    const ordercompletedExist=await OrderCompleted.findById(req.params.id).populate({path:"orderId",populate: {
+                                                                                    path:"items", select:["productId","quantity","totalPrice"]
+                                                                                    ,populate: { path: "productId", select: ["name", "price"]
+                                                                                    
+                                                                                  }}
+                                                                               }).populate({path:"orderId",populate: {
+                                                                                path: "userId", select: ["fistname", "lastname","email"]}});
     if(!ordercompletedExist)
     {
         res.status(400).json(new AppError("Order haven't exist"));
@@ -61,8 +72,13 @@ router.get("/paging",async(req,res)=>{
 
     //const subcategoryId=req.query.subcategoryId;
     let query=OrderCompleted.find(JSON.parse(queryStr)).populate("orderId");
-    query=query.skip(parseInt(skip)).limit(parseInt(limit)).populate({path:"orderId",populate: { path: "userId", select: ["fistname", "lastname","email"]
-                                                                        ,path:"items", select:["productId","quantity","totalPrice"],populate: { path: "productId", select: ["name", "price"]  }}});
+    query=query.skip(parseInt(skip)).limit(parseInt(limit)).populate({path:"orderId",populate: {
+                                                                            path:"items", select:["productId","quantity","totalPrice"]
+                                                                            ,populate: { path: "productId", select: ["name", "price"]
+                                                                            
+                                                                        }}
+                                                                    }).populate({path:"orderId",populate: {
+                                                                        path: "userId", select: ["fistname", "lastname","email"]}});
     if(req.query.sort)
     {
         query=query.sort(req.query.sort);
@@ -85,8 +101,13 @@ router.get("/search",async(req,res)=>{
     const queryObj={...req.query};
     let queryStr=JSON.stringify(queryObj);
     console.log(queryStr);
-    let query=OrderCompleted.find(JSON.parse(queryStr)).populate({path:"orderId",populate: { path: "userId", select: ["fistname", "lastname","email"]
-                                                                ,path:"items", select:["productId","quantity","totalPrice"],populate: { path: "productId", select: ["name", "price"]  }}});
+    let query=OrderCompleted.find(JSON.parse(queryStr)).populate({path:"orderId",populate: {
+                                                                path:"items", select:["productId","quantity","totalPrice"]
+                                                                ,populate: { path: "productId", select: ["name", "price"]
+                                                                
+                                                            }}
+                                                        }).populate({path:"orderId",populate: {
+                                                            path: "userId", select: ["fistname", "lastname","email"]}});
     //let query=OrderCompleted.find()
     if(req.query.sort)
     {
