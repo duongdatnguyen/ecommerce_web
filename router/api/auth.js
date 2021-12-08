@@ -199,7 +199,7 @@ async function verifyGoogle(token) {
 
 router.post("/googlelogin",async(req,res)=>{
     const {tokenId}=req.body.tokenId;
-
+    let errorResult="";
    try{
     let result = await verifyGoogle(tokenId);
 
@@ -241,6 +241,7 @@ router.post("/googlelogin",async(req,res)=>{
           role: "user",
           status: true,
         });
+        errorResult="Going to send email";
         const message={ // thiết lập đối tượng, nội dung gửi mail
           from: 'Ecomerrce tieu luan chuyen nganh',
           to: user.email,
@@ -252,6 +253,7 @@ router.post("/googlelogin",async(req,res)=>{
           "</h2>"
       }
       sendEmail(message);
+      errorResult="Going to send email";
       const saveUser = await user.save();
       const payload={
         user:
@@ -265,7 +267,7 @@ router.post("/googlelogin",async(req,res)=>{
    }
    catch(error)
    {
-    return res.status(400).json(new AppError(error));
+    return res.status(400).json(new AppError(errorResult));
    }
 })
 
