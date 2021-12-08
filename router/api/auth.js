@@ -11,6 +11,12 @@ const passport = require("passport");
 
 const sendEmail=require("../../services/sendMail");
 const AppError = require("../../models/AppError");
+const configgoogle=require("../../config/configGoogle");
+const {OAuth2Client}=require("google-auth-library");
+
+
+
+const client=new OAuth2Client("907790633444-0fnqh5mpf12k1jfes1pal08gv51vhnsh.apps.googleusercontent.com");
 
 /**GET
  * API '/'
@@ -147,12 +153,8 @@ router.get("/auth/success",(req, res) => {
 //  });
 
 router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile','email'] }));
+  passport.authenticate('google', { scope: ['profile','email'] }),async(req,res)=>{
 
-
-router.get('/auth/google/callback', 
-  passport.authenticate('google'),
-  function(req, res) {
     if(!req.user)
     {
         return res.status(400).json(new AppError("Can't connect user"));
@@ -167,6 +169,106 @@ router.get('/auth/google/callback',
         return res.status(200).json({jwt:token,user:req.user});
     })
   });
+
+
+// router.get('/auth/google/callback', 
+//   passport.authenticate('google'),
+//   function(req, res) {
+//     if(!req.user)
+//     {
+//         return res.status(400).json(new AppError("Can't connect user"));
+//     }
+//     const payload={
+//         user:
+//         {id:req.user.id},
+//     }
+
+//     jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+//         if(error) return  res.json({error:[{"msg":error}]});
+//         return res.status(200).json({jwt:token,user:req.user});
+//     })
+//   });
+
+async function verifyGoogle(token) {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: configgoogle.lientID,
+    });
+    return ticket.getPayload();
+  }
+
+router.post("/googlelogin",async(req,res)=>{
+    const {tokenId}=req.body.tokenId;
+
+   try{
+    let result = await verifyGoogle(tokenId);
+
+    const email = result.email;
+        const existingUser = await User.findOne({ email:email });
+        if (existingUser) {
+          if (!existingUser.googleID) {
+            await User.findOneAndUpdate(
+              existingUser.id ,
+              {
+                $set: {
+                  googleId: result.sub,
+                },
+              }
+            );
+          }
+          const payload={
+                    user:
+                    {id:existingUser.id},
+                }
+            
+                jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+                    if(error) return  res.json({error:[{"msg":error}]});
+                    return res.status(200).json({jwt:token,user:existingUser});
+                })
+        }
+        const newPassword = generator.generate({
+                                    length: 10,
+                                    numbers: true,
+                                  });
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+        const user = new User({
+          email: result.email,
+          password: hashPassword,
+          googleId: result.sub,
+          fistname:result.given_name,
+          lastname:result.family_name,
+          role: "user",
+          status: true,
+        });
+        const message={ // thiết lập đối tượng, nội dung gửi mail
+          from: 'Ecomerrce tieu luan chuyen nganh',
+          to: user.email,
+          subject: 'Create new account',
+          text: "Tài khoản của bạn đã được đăng nhập vào website",
+          html: "<span>Bạn vừa đăng nhập nhập tài khoản bằng Google hoặc Facebook. Dưới đây là mật khẩu mới của bạn!" +
+          "</span> </br><h2>" +
+          newPassword +
+          "</h2>"
+      }
+      sendEmail(message);
+      const saveUser = await user.save();
+      const payload={
+        user:
+        {id:saveUser.id},
+    }
+
+    jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+        if(error) return  res.json({error:[{"msg":error}]});
+        return res.status(200).json({jwt:token,user:saveUser});
+    })
+   }
+   catch(error)
+   {
+    return res.status(400).json(new AppError("Error login google"));
+   }
+})
+
 
 
 module.exports=router;
