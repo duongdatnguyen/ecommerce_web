@@ -52,6 +52,8 @@ router.post("/",auth,async(req,res)=>{
     orderAdd.items.unshift(...itemIds);
     orderAdd.addressrecevie=req.body.addressrecevie;
     orderAdd.address=req.body.address;
+    orderAdd.paymentId=req.body.paymentId;
+    orderAdd.isPaypal=req.body.isPaypal;
     await orderAdd.save();
     const message={ // thiết lập đối tượng, nội dung gửi mail
         from: 'Ecomerce web',

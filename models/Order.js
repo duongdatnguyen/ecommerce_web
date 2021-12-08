@@ -66,6 +66,10 @@ const OrderSchema=mongoose.Schema({
     },
     paymentId:{
         type:String
+    },
+    isPaypal:
+    {
+        type:Boolean
     }
 });
 
