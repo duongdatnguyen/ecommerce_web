@@ -198,9 +198,8 @@ async function verifyGoogle(token) {
   }
 
 router.post("/googlelogin",async(req,res)=>{
-    const {tokenId}=req.body.tokenId;
+    const {tokenId}=req.body;
     let errorResult="";
-  
     let result = await verifyGoogle(tokenId);
 
     const email = result.email;
