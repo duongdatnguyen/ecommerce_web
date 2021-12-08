@@ -105,7 +105,7 @@ router.delete("/:orderId",auth,async(req,res)=>{
         {
             return res.status(400).json(new AppError("Order is not exist"));
         }
-        Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}));
+        await Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}));
         const orderResult=await Order.findById(req.params.orderId);
         return res.status(200).json(orderResult);
 });
