@@ -8,7 +8,7 @@ const User=require("../../models/Users");
 const { body } = require("express-validator");
 const auth = require("../../midleware/auth");
 const passport = require("passport");
-
+const generator=require('generate-password');
 const sendEmail=require("../../services/sendMail");
 const AppError = require("../../models/AppError");
 const configgoogle=require("../../config/configGoogle");
@@ -251,7 +251,7 @@ router.post("/googlelogin",async(req,res)=>{
           newPassword +
           "</h2>"
       }
-      //sendEmail(message);
+      sendEmail(message);
       const saveUser = await user.save();
       const payload={
         user:
