@@ -265,7 +265,7 @@ router.post("/googlelogin",async(req,res)=>{
    }
    catch(error)
    {
-    return res.status(400).json(new AppError("Error login google"));
+    return res.status(400).json(new AppError(error));
    }
 })
 
