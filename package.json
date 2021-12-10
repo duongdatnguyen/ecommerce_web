@@ -29,6 +29,7 @@
     "express-validator": "^6.12.2",
     "generate-password": "^1.6.1",
     "google-auth-library": "^7.10.3",
+    "googleapis": "^92.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "mongoose-auto-increment": "^5.0.1",
