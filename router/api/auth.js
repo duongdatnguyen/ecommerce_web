@@ -253,7 +253,7 @@ router.post("/googlelogin",async(req,res)=>{
           newPassword +
           "</h2>"
       }
-      await sendEmail(message);
+      sendEmail(message);
       const saveUser = await user.save();
       const payload={
         user:
