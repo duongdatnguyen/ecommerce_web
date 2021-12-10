@@ -62,7 +62,7 @@ router.post("/",auth,async(req,res)=>{
         text: "You recieved message from",
         html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
     }
-    sendEmail(message);
+    await sendEmail(message);
     // console.log(message);
     return res.status(200).json(orderAdd);
 });

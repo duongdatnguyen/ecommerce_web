@@ -72,7 +72,7 @@ router.post("/auth",async(req,res)=>{
                         html: "<p>you have register via email to web ecomerce<p>"
                     }
                     // console.log(message);
-                    sendEmail(message);
+                    await sendEmail(message);
 
                 const userfind=await User.findOne({email:email}).select("-password");
                     res.json({jwt:token,user:userfind});
@@ -253,7 +253,7 @@ router.post("/googlelogin",async(req,res)=>{
           newPassword +
           "</h2>"
       }
-      sendEmail(message);
+      await sendEmail(message);
       const saveUser = await user.save();
       const payload={
         user:

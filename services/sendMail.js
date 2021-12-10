@@ -22,13 +22,13 @@ const nodemailer=require("nodemailer");
       } else {
         //Nếu thành công
         //Tiến hành gửi email
-        transport.sendMail(message,(error,infor)=>{
+      transport.sendMail(message,(error,infor)=>{
             if(error)
             {
                 console.log(error);
-                res.status(400).json({"msg":"Email failed"});
+                
             }
-            res.status(200).json({"msg":"Email success"});
+            console.log("Email sent success");
         });
       }
     });
