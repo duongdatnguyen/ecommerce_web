@@ -56,7 +56,7 @@ router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
             return res.status(400).json(new AppError("Product does not exist!!!"));
         }
     const newPath=await uploadCloud(req.file.path);
-    console.log(req.file.path);
+    
     productUpdate.images=newPath.url;
     await productUpdate.save();
     return res.status(200).json(productUpdate);
