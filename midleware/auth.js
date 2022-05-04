@@ -1,13 +1,17 @@
 const jwt=require("jsonwebtoken");
 const {Sercet_token}=require("../config/default");
 const Users = require("../models/Users");
+const router = require("../services/payment");
+
+
+
 
 module.exports=function(req,res,next)
 {
     const token=req.header('x-auth-token');
     if(!token)
     {
-        return res.json({error:[{"msg":"Token is null"}]});
+        return res.status(400).json({error:[{"msg":"Token is null"}]});
     }
     try
     {
@@ -17,7 +21,7 @@ module.exports=function(req,res,next)
     }
     catch(error)
     {
-        return res.json({error:[{"msg":error}]});
+        return res.status(400).json({error:[{"msg":error}]});
     }
 };
 

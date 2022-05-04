@@ -10,7 +10,7 @@ const secureAPi = require("../../../midleware/secureAPi");
 const paypal=require("../../../services/payment");
 const sendEmail=require("../../../services/sendMail");
 const Product = require("../../../models/Product");
-
+const orderController=require("../../../controllers/order/orderController");
 router.get("/",auth,async(req,res)=>{
     const orders=await Order.find({"userId":req.user.id}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(orders.length===0)
@@ -21,51 +21,7 @@ router.get("/",auth,async(req,res)=>{
 });
 
 
-router.post("/",auth,async(req,res)=>{
-    const userOrder=await Users.findById(req.body.userId);
-    if(!userOrder)
-    {
-        return res.status(400).json(new AppError("User havem't exist"));
-    }
-    const items=req.body.items;
-    if(items.length===0)
-    {
-        return res.status(400).json(new AppError("No item order"));
-    }
-    let itemIds=[];
-        for(let i=0;i<items.length;i++)
-        {
-            const itemAdd=new ItemOrder(items[i]);
-            const product= await Product.findById(items[i].productId);
-            if(product.quantity<items[i].quantity)
-            {
-                return res.status(400).json(new AppError(`Product id ${items[i].productId} out of stock `));
-            }
-            product.quantity=product.quantity-items[i].quantity;
-            await product.save();
-            await itemAdd.save();
-            itemIds.unshift(itemAdd._id);
-        }
-    const orderAdd=new Order();
-    orderAdd.userId=req.body.userId;
-    orderAdd.totalPrice=req.body.totalPrice;
-    orderAdd.items.unshift(...itemIds);
-    orderAdd.addressrecevie=req.body.addressrecevie;
-    orderAdd.address=req.body.address;
-    orderAdd.paymentId=req.body.paymentId;
-    orderAdd.isPaypal=req.body.isPaypal;
-    await orderAdd.save();
-    const message={ // thiết lập đối tượng, nội dung gửi mail
-        from: 'Ecomerce web',
-        to: userOrder.email,
-        subject: 'Order success',
-        text: "You recieved message from",
-        html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
-    }
-    sendEmail(message);
-    // console.log(message);
-    return res.status(200).json(orderAdd);
-});
+router.post("/",auth,async(req,res)=>orderController.addItemtoOrder(req,res));
 
 /**
  * Update items in order

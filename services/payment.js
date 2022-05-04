@@ -11,7 +11,7 @@ paypal.configure({
     'client_secret': configPayment.client_secret
   });
 
-  router.post("/payment",async(req,res)=>{
+  router.get("/payment/",async(req,res)=>{
     const create_payment_json = {
         "intent": "sale",
         "payer": {
@@ -58,21 +58,21 @@ router.get('/success', (req, res) => {
   
     const execute_payment_json = {
       "payer_id": payerId,
-      "transactions": [{
-          "amount": {
-              "currency": "USD",
-              "total": "25.00"
-          }
-      }]
+    //   "transactions": [{
+    //       "amount": {
+    //           "currency": "USD",
+    //           "total": "25.00"
+    //       }
+    //   }]
     };
   
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+    paypal.payment.execute(paymentId,execute_payment_json, function (error, payment) {
       if (error) {
           console.log("error here");
           console.log(error.response);
       } else {
-          console.log(JSON.stringify(payment));
-          res.send('Success');
+          console.log(payment.id);
+          res.send(payment);
       }
   });
   });

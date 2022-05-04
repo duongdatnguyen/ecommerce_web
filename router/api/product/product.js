@@ -2,9 +2,10 @@ const express=require("express");
 const router=express.Router();
 const validationProduct = require("../../../midleware/validationProduct");
 const Product = require("../../../models/Product");
-
+// const updateMutiple=require("../../../services/multer");
 const AppError = require("../../../models/AppError");
-const multer=require("../../../services/multer");
+const multerService=require("../../../services/multer");
+const multer=require("multer");
 const cloudinary=require("../../../services/cloudinary");
 //Paging product to display
 router.get("/paging",async(req,res)=>{
@@ -44,9 +45,40 @@ router.get("/paging",async(req,res)=>{
 })
 
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'images')
+    },
+    filename: function (req, file, cb) {
+      
+      cb(null, file.originalname);
+    }
+  })
+
+  router.post('/imagesMutiple/:productId', multerService.array('photo', 3), async(req, res, next)=> {
+    const fileinfo = req.files;
+    const title = req.body.title;
+    console.log(fileinfo);
+    const productUpdate= await Product.findById(req.params.productId);
+    const uploadCloud=async (path) => await cloudinary.uploads(path,"Images");
+    if(!productUpdate)
+        {
+            return res.status(400).json(new AppError("Product does not exist!!!"));
+        }
+    for(file of fileinfo)
+    {
+        let newPath=await uploadCloud(file.path);
+        //console.log(file);
+        productUpdate.images.push(newPath.url);
+    }
+    await productUpdate.save();
+    
+    return res.status(200).json(productUpdate);
+  })
+
 //Update Iamge 
 
-router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
+router.post("/images/:productId",multerService.single("photo"),async(req,res)=>{
     
 
     const uploadCloud=async (path) => await cloudinary.uploads(path,"Images");
@@ -57,7 +89,7 @@ router.post("/images/:productId",multer.single("photo"),async(req,res)=>{
         }
     const newPath=await uploadCloud(req.file.path);
     
-    productUpdate.images=newPath.url;
+    productUpdate.images.push(newPath.url);
     await productUpdate.save();
     return res.status(200).json(productUpdate);
 })
@@ -101,7 +133,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
                                                                                 "status":status,
                                                                                 "quantity":quantity
                                                                             }});
-            const productResult= await Product.findById(req.params.productId);
+            const productResult= await Product.findById(req.params.productId).populate('subcategoryId').populate("size");
             res.status(200).json(productResult);
             
 
@@ -109,7 +141,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
 
 //Get product
 router.get('/:idProduct',async(req,res)=>{
-        const product =await Product.findById(req.params.idProduct).populate('subcategoryId');
+        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size").populate("saleId");
         if(!product)
         {
            return res.status(400).json(new AppError("Product haven't exist"));
@@ -140,7 +172,7 @@ router.get("/",async(req,res)=>{
     const queryObj={...req.query};
     
     let queryStr=JSON.stringify(queryObj);  
-    let query=Product.find(JSON.parse(queryStr)).populate("subcategoryId");
+    let query=Product.find(JSON.parse(queryStr)).populate("subcategoryId").populate("size");
     if(req.query.sort)
     {
         query=query.sort(req.query.sort);

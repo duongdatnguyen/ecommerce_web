@@ -8,9 +8,9 @@ const ProductSchema=mongoose.Schema({
         required: true,
         ref: "subCategory",
       },
-      brandId: {
+      size: {
         type: mongoose.Schema.Types.Number,
-        ref: "Brands",
+        ref: "size",
       },
       name: {
         type: String,
@@ -38,8 +38,7 @@ const ProductSchema=mongoose.Schema({
         default:true
       },
       images:{
-        type:String,
-        default:""
+        type:Array
       },
       dateCreate: {
         type: Date,
@@ -50,6 +49,11 @@ const ProductSchema=mongoose.Schema({
       },
       quantity:{
         type:Number
+      },
+      saleId:
+      {
+        type: mongoose.Schema.Types.Number,
+        ref: "sales",
       }
 });
 

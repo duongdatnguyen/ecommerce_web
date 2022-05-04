@@ -46,7 +46,7 @@ router.post("/auth",async(req,res)=>{
             const user=await User.findOne({email:email});
             if(!user)
             {
-                res.json({error:[{"msg":"User invalid on database"}]});
+                res.status(400).json({error:[{"msg":"User invalid on database"}]});
             }
             else
             {

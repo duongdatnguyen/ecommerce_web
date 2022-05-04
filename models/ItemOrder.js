@@ -16,6 +16,16 @@ const ItemSchema=mongoose.Schema({
         require:true,
         default:1
     },
+    sizeId: {
+        type: Number,
+        ref:"size"
+      },
+      colorName: {
+        type: String,
+      },
+      nameSize:{
+        type:String
+    },
     totalPrice:{
         type:Number,
         require:true

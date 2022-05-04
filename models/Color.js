@@ -2,19 +2,18 @@ const mongoose=require('mongoose');
 const autoIncrement=require('mongoose-auto-increment');
 
 const ColorOptionSchema = mongoose.Schema({
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "'product",
-    },
+   
     color: {
       type: String,
       required: true,
     },
-    image: {
-      type: String,
+    quantity:{
+      type:Number,
       required: true,
     },
+    image: {
+      type: String
+    },
   });
-  module.exports = mongoose.model("ColorOptions", ColorOptionSchema);
+  module.exports = mongoose.model("colorOptions", ColorOptionSchema);
   
