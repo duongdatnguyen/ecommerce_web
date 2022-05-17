@@ -1,7 +1,6 @@
 const mongoose=require("mongoose");
 const autoIncrement= require("mongoose-auto-increment");
 const Schema = mongoose.Schema
-
 const color=mongoose.Schema({
     colorName: {
         type: String,
@@ -9,9 +8,10 @@ const color=mongoose.Schema({
       quantity:{
         type:Number
       }
-},{ _id : false }
+}
 );
-
+autoIncrement.initialize(mongoose.connection);
+color.plugin(autoIncrement.plugin,'color');
 
 const SizeSchema=mongoose.Schema({
     nameSize:{

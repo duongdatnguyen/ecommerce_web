@@ -1,6 +1,6 @@
 const Size=require("../../models/Size");
 const Color=require("../../models/Color");
-
+const Product=require("../../models/Product");
 
 class sizeController
 {
@@ -15,17 +15,21 @@ class sizeController
             // }
             let productId=req.body.productId;
             const product=await Product.findById(productId);
+            console.log(productId);
             if(!product)
             {
                 res.status(400).json({"messsage":"Product is null"});
             }
 
             let size=new Size(req.body);
-            //console.log(size);
-            await size.save();
+            await size.save()
+            .then()
+            .catch(error=> res.status(400).json({"message":"Size create failed", "error":error}));
+
             product.size=size._id;
-            await product.save();
-            res.status(200).json(size);
+            await product.save().then(()=>res.status(200).json(size))
+            .catch(error=> res.status(400).json({"message":"Size create failed", "error":error}));
+            
     }
     async updateSize(req,res)
     {

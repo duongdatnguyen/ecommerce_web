@@ -20,8 +20,9 @@ const configPassport=require("./config/passport");
 const session=require("express-session");
 const sale=require("./router/api/product/Sale");
 const jobSchedule=require("./services/jobSchedule");
+const coupon=require("./router/api/coupon/coupon");
 // const schedule_app=require("./services/jobSchedule");
-
+const ownercoupons=require("./router/api/coupon/ownercoupons");
 
 app.use(session({ secret: 'thisissercet',
                 resave: false,
@@ -41,11 +42,13 @@ app.use("/subcategories",subcategories);
 app.use("/products",product);
 app.use("/sizes",size);
 app.use("/sales",sale);
+app.use("/coupons",coupon);
+app.use("/ownercoupons",ownercoupons);
 app.use("/orders",order);
 app.use("/ordercompletes",ordercompleted);
 app.use("/pay",paymentRouter);
 
 
-const PORT=process.env.PORT||3000;
+const PORT=process.env.PORT||8080;
 
 app.listen(PORT,()=>console.log(`Server is listening port ${PORT}`));

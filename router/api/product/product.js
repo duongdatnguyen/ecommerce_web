@@ -141,7 +141,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
 
 //Get product
 router.get('/:idProduct',async(req,res)=>{
-        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size").populate("saleId");
+        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("saleId");
         if(!product)
         {
            return res.status(400).json(new AppError("Product haven't exist"));
@@ -182,6 +182,25 @@ router.get("/",async(req,res)=>{
     const products=await query;
     res.status(200).json(products);
 })
+
+
+
+router.get("/search/*",async(req,res)=>{
+    console.log(req.query);
+    const string_search=req.params.stringSearch;
+    let products=null;
+    let regex = new RegExp(string_search,'i');
+    products= await Product.find({$or:[{"name":regex},{"orgin":regex},{"material":regex}]})
+    .populate("subcategoryId").populate("size");
+
+    if(products==null)
+        {
+            res.status(400).json({"message":`Can't find product match this string ${string_search}`});
+        }
+    
+    res.status(200).json(products);
+});
+
 
 
 module.exports=router;

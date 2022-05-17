@@ -2,28 +2,6 @@ const mongoose = require("mongoose");
 
 const autoIncrement= require("mongoose-auto-increment");
 
-const Datesetup=mongoose.Schema({
-    day: {
-        type: Number,
-      },
-      month: {
-        type: Number,
-      },
-      year: {
-        type: Number,
-      },
-      hour: {
-        type: Number,
-      },
-      minute: {
-        type: Number,
-      },
-      second:{
-        type: Number,
-      }
-},{ _id : false }
-);
-
 const SaleSchema = mongoose.Schema({
     productId:
     {
@@ -43,8 +21,6 @@ const SaleSchema = mongoose.Schema({
     statusSale: {
         type: Boolean
     },
-    dateStart: Datesetup,
-    dateEnd: Datesetup,
     quantityDiscount:{
         type: Number
     }

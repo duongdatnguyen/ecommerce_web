@@ -55,6 +55,7 @@ const ProductSchema=mongoose.Schema({
         type: mongoose.Schema.Types.Number,
         ref: "sales",
       }
+      
 });
 
 ProductSchema.plugin(autoIncrement.plugin,'ProductSchema');

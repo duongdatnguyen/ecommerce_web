@@ -3,17 +3,18 @@ const autoIncrement=require('mongoose-auto-increment');
 
 const ColorOptionSchema = mongoose.Schema({
    
-    color: {
-      type: String,
-      required: true,
-    },
-    quantity:{
-      type:Number,
-      required: true,
-    },
-    image: {
-      type: String
-    },
+      colorName: {
+        type: String,
+      },
+      quantity:{
+        type:Number
+      },
+        image: {
+          type: String
+        }
   });
-  module.exports = mongoose.model("colorOptions", ColorOptionSchema);
+
+autoIncrement.initialize(mongoose.connection);
+ColorOptionSchema.plugin(autoIncrement.plugin,'color');
+module.exports = mongoose.model("colorOptions", ColorOptionSchema);
   

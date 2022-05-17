@@ -32,18 +32,63 @@ class OrderController{
     orderAdd.address=req.body.address;
     orderAdd.paymentId=req.body.paymentId;
     orderAdd.isPaypal=req.body.isPaypal;
-    await orderAdd.save();
+
+    let checkAddItemSucces=this.checkAddItemSuccess(items,itemIds);
     
-    const message={ // thiết lập đối tượng, nội dung gửi mail
-        from: 'Ecomerce web',
-        to: userOrder.email,
-        subject: 'Order success',
-        text: "You recieved message from",
-        html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
+    console.log(checkAddItemSucces);
+    if(checkAddItemSucces)
+    {
+        
+        await orderAdd.save();
+    
+        const message={ // thiết lập đối tượng, nội dung gửi mail
+            from: 'Ecomerce web',
+            to: userOrder.email,
+            subject: 'Order success',
+            text: "You recieved message from",
+            html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
+        }
+        //sendEmail(message);
+        // console.log(message);
+        return res.status(200).json(orderAdd);
     }
-    sendEmail(message);
-    // console.log(message);
-    return res.status(200).json(orderAdd);
+    else{
+        let messageError=this.getMessageFailed(items,itemIds);
+        return res.status(400).json({"message":"Add order failed","error":messageError});
+    }
+
+    
+    }
+
+    getMessageFailed(items,itemIds)
+    {
+        let messageError=[];
+        if(itemIds.length==0)
+        {
+            messageError.push(`Item ${items.length} faild to order`);
+        }
+        else
+        {
+        items.forEach(v => {
+            if(itemIds.indexOf(v))
+            {
+                messageError.push(`Product with ID ${v} is out of stock`);
+            }
+        });
+        }
+        return messageError;
+    
+    }
+
+    checkAddItemSuccess(items,itemIds)
+    {
+        console.log(items.length)
+        console.log(itemIds.length)
+       if(items.length==itemIds.length)
+       {return true;}
+       else
+       return false;
+       
     }
 
     async addItemList(items,addItemList)
@@ -61,20 +106,29 @@ class OrderController{
                     if(colors[jj].quantity>itemAdd.quantity)
                     {
                         size.colors[jj].quantity=colors[jj].quantity-itemAdd.quantity;
+
+                        await size.save();
+                        let saleId=items[i].saleId;
+                        if(!saleId)
+                        {
+                            await itemAdd.save();
+                            addItemList.unshift(itemAdd._id); 
+                        }
+                        else
+                        {
+                        let applySale= await SaleController.applySale(saleId, itemAdd.quantity);
+                        if(applySale)
+                        {
+                            await itemAdd.save();
+                            addItemList.unshift(itemAdd._id);    
+                        }
+                        }
                     }
                 }
 
             }
             
-            await size.save();
-            let saleId=items[i].saleId;
-            console.log(saleId)
-            let applySale= await SaleController.applySale(saleId, itemAdd.quantity);
-            if(applySale)
-            {
-                await itemAdd.save();
-                addItemList.unshift(itemAdd._id);    
-            }
+            
             
         }
     }
