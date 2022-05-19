@@ -44,7 +44,10 @@ const CouponsSchema = mongoose.Schema({
     dateEnd: Datesetup,
     priceOrderLimit:{
         type: Number
-    }
+    },
+    priceOrderMax:{
+      type: Number
+  }
 });
 
 

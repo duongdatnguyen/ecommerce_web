@@ -67,7 +67,7 @@ router.delete("/:addressid",auth,async(req,res)=>{
             }
         }
         await user.save();
-        res.json(user);
+        res.status(200).json(user);
     }
     catch(error)
     {

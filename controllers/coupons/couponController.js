@@ -25,7 +25,7 @@ class CouponsController
     {
 
         const couponId=req.params.couponId;
-        const {nameVouncher,description,discountPercent,statusCoupon,dateStart,datEnd,priceOrderLimit}=req.body;
+        const {nameVouncher,description,discountPercent,statusCoupon,dateStart,datEnd,priceOrderLimit,priceOrderMax}=req.body;
 
         const coupon=await Coupon.findById(couponId);
        
@@ -52,6 +52,10 @@ class CouponsController
         if(priceOrderLimit !=null)
         {
             coupon.priceOrderLimit=priceOrderLimit;
+        }
+        if(priceOrderMax !=null)
+        {
+            coupon.priceOrderMax=priceOrderMax;
         }
 
         await coupon.save()

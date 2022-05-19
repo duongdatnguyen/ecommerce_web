@@ -10,6 +10,8 @@ router.put("/:sizeID",async(req,res)=>sizeController.updateSize(req,res));
 
 router.get("/",async(req,res)=>sizeController.getSize(req,res));
 
-router.get("/:sizeID",async(req,res)=>sizeController.updateSize(req,res))
+router.get("/:sizeID",async(req,res)=>sizeController.updateSize(req,res));
+
+router.get("/product/:productId",async(req,res)=>sizeController.getSizeByProductId(req,res));
 
 module.exports=router;

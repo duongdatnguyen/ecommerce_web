@@ -23,6 +23,7 @@ const jobSchedule=require("./services/jobSchedule");
 const coupon=require("./router/api/coupon/coupon");
 // const schedule_app=require("./services/jobSchedule");
 const ownercoupons=require("./router/api/coupon/ownercoupons");
+const dashboards= require("./router/api/dashboard/dashboard");
 
 app.use(session({ secret: 'thisissercet',
                 resave: false,
@@ -47,6 +48,7 @@ app.use("/ownercoupons",ownercoupons);
 app.use("/orders",order);
 app.use("/ordercompletes",ordercompleted);
 app.use("/pay",paymentRouter);
+app.use("/dashboards",dashboards);
 
 
 const PORT=process.env.PORT||8080;

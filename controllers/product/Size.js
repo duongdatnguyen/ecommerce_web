@@ -64,6 +64,12 @@ class sizeController
     {
         
     }
+    async getSizeByProductId(req,res)
+    {
+        let productList= await Size.find({"productId":req.params.productId});
+
+        res.status(200).json(productList);
+    }
 }
 
 module.exports=new sizeController;

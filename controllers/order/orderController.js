@@ -35,7 +35,6 @@ class OrderController{
 
     let checkAddItemSucces=this.checkAddItemSuccess(items,itemIds);
     
-    console.log(checkAddItemSucces);
     if(checkAddItemSucces)
     {
         
@@ -82,8 +81,6 @@ class OrderController{
 
     checkAddItemSuccess(items,itemIds)
     {
-        console.log(items.length)
-        console.log(itemIds.length)
        if(items.length==itemIds.length)
        {return true;}
        else
@@ -108,21 +105,8 @@ class OrderController{
                         size.colors[jj].quantity=colors[jj].quantity-itemAdd.quantity;
 
                         await size.save();
-                        let saleId=items[i].saleId;
-                        if(!saleId)
-                        {
-                            await itemAdd.save();
-                            addItemList.unshift(itemAdd._id); 
-                        }
-                        else
-                        {
-                        let applySale= await SaleController.applySale(saleId, itemAdd.quantity);
-                        if(applySale)
-                        {
-                            await itemAdd.save();
-                            addItemList.unshift(itemAdd._id);    
-                        }
-                        }
+                        await itemAdd.save();
+                        addItemList.unshift(itemAdd._id); 
                     }
                 }
 
