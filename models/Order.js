@@ -42,7 +42,7 @@ const OrderSchema=mongoose.Schema({
             type:String
           },
           district:{
-            type:Strin
+            type:String
           },
           ward: {
             type: String
