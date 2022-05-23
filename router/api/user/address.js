@@ -13,7 +13,7 @@ const auth = require("../../../midleware/auth");
  */
 
 router.post("/",[auth,validatonUser.checkValidAddress],async(req,res)=>{
-    const {city,district,ward,street,...rest}=req.body;
+    const {city,district,ward,street,nameCustomer,detailAddress,phoneNumber,...rest}=req.body;
     const newaddress={};
 
 
@@ -21,7 +21,10 @@ router.post("/",[auth,validatonUser.checkValidAddress],async(req,res)=>{
     if(district) newaddress.district=district;
     if(ward) newaddress.ward=ward;
     if(street) newaddress.street=street;
-
+    if(nameCustomer) newaddress.nameCustomer=nameCustomer;
+    if(detailAddress) newaddress.detailAddress=detailAddress;
+    if(phoneNumber) newaddress.phoneNumber=phoneNumber;
+    
     try{
         const user=await User.findById(req.user.id).select("-password");
         if(user.addresses.length===0)
@@ -35,7 +38,7 @@ router.post("/",[auth,validatonUser.checkValidAddress],async(req,res)=>{
         user.addresses.unshift(newaddress);
 
         await user.save();
-        res.json(user);
+        res.status(200).json(user);
     }
     catch(error)
     {

@@ -19,8 +19,11 @@ const ItemSchema=mongoose.Schema({
       colorName: {
         type: String,
       },
-      nameSize:{
+      sizeName:{
         type:String
+    },
+    priceDiscount:{
+        type:Number
     },
     totalPrice:{
         type:Number,

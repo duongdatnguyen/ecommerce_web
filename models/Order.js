@@ -29,36 +29,27 @@ const OrderSchema=mongoose.Schema({
     addressrecevie:{
         name:
         {
-          type:String,
-          min:3,
+          type:String
         },
         phonenumber:
         {
           type:String,
         },
         address:{
-          type:String,
-          default:true
+          type:String
         },
-        // city:{
-        //     type:String,
-        //     required:true,
-        //     min:3
-        //   },
-        //   district:{
-        //     type:String,
-        //     required:true,
-        //     min:3
-        //   },
-        //   ward: {
-        //     type: String,
-        //     required: true,
-        //   },
-        //   street:{
-        //     type:String,
-        //     required:true,
-        //     min:3
-        //   }
+        city:{
+            type:String
+          },
+          district:{
+            type:Strin
+          },
+          ward: {
+            type: String
+          },
+          street:{
+            type:String
+          }
     },
     address:{
         type:String,

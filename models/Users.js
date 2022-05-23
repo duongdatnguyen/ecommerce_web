@@ -70,6 +70,18 @@ const UserSchema=new mongoose.Schema({
               required:true,
               min:3
             },
+            nameCustomer:{
+              type:String,
+              
+            },
+            detailAddress:{
+              type:String
+              
+            },
+            phoneNumber:{
+              type:String
+              
+            },
             default:{
               type:Boolean,
               required:true

@@ -88,25 +88,34 @@ class OrderController{
        
     }
 
+
+
     async addItemList(items,addItemList)
     {
+        let listSizeUpdate=[];
+        let listItemAdd=[];
         for(let i=0;i<items.length;i++)
         {
             const itemAdd=new ItemOrder(items[i]);
-            const size= await Size.findById(items[i].sizeId);
+            const sizeFind= await Size.findOne({"nameSize":items[i].sizeName,"productId":items[i].productId});
+            const size= new Size(sizeFind);
+
             const colorName=itemAdd.colorName;
-            const colors=size.colors;
+            let colors= size['colors'];
+
             for(let jj=0;jj<colors.length;jj++)
             {
                 if(colors[jj].colorName==colorName)
                 {
-                    if(colors[jj].quantity>itemAdd.quantity)
+                    if(colors[jj].quantity>=itemAdd.quantity)
                     {
                         size.colors[jj].quantity=colors[jj].quantity-itemAdd.quantity;
 
-                        await size.save();
-                        await itemAdd.save();
-                        addItemList.unshift(itemAdd._id); 
+                        listSizeUpdate.push(size);
+                        listItemAdd.push(itemAdd);
+                        // await size.save();
+                        // await itemAdd.save();
+                        // addItemList.unshift(itemAdd._id); 
                     }
                 }
 
@@ -114,6 +123,19 @@ class OrderController{
             
             
             
+        }
+        if(listSizeUpdate.length == items.length)
+        {
+            for(let size of listSizeUpdate)
+            {
+                await size.save();
+                
+            }
+            for( let item of listItemAdd)
+            {
+                await item.save();
+                addItemList.unshift(item._id); 
+            }
         }
     }
 }
