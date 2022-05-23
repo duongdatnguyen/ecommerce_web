@@ -32,6 +32,7 @@ class OrderController{
     orderAdd.address=req.body.address;
     orderAdd.paymentId=req.body.paymentId;
     orderAdd.isPaypal=req.body.isPaypal;
+    orderAdd.priceDiscount =req.body.priceDiscount;
 
     let checkAddItemSucces=this.checkAddItemSuccess(items,itemIds);
     

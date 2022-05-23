@@ -20,6 +20,9 @@ const OrderSchema=mongoose.Schema({
         type:Number,
         require:true,
     },
+    priceDiscount :{
+        type:Number
+    },
     status:
     {
         type:String,
