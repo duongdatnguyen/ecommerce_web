@@ -92,6 +92,46 @@ class CouponsController
         res.status(200).json(coupons);
         
     }
+
+    async getAllCouponValid(req,res)
+    {
+        
+        
+
+        const coupons=await Coupon.find();
+
+        let couposListValid=[];
+        if(!coupons)
+        {
+            res.status(400).json({"messsage":"Coupons is null"});
+        }
+
+        for(let coupon of coupons)
+        {
+            const dateStart=coupon.dateStart;
+        
+            const dateEnd=coupon.dateEnd;
+    
+            const dateStart_Date =new  Date(dateStart.year,dateStart.month-1,dateStart.day,dateStart.hour,dateStart.minute,dateStart.second,0);
+    
+            const dateStart_Number=dateStart_Date.getTime();
+            const dateEnd_Date =new  Date(dateEnd.year,dateEnd.month-1,dateEnd.day,dateEnd.hour,dateEnd.minute,dateEnd.second);
+            const dateEnd_Number=dateEnd_Date.getTime();
+    
+            const dateCurrent = Date.now();
+    
+            if(dateCurrent>=dateStart_Number&& dateCurrent<=dateEnd_Number)
+            {
+                couposListValid.push(coupon);
+                
+            }
+           
+        }
+        
+
+        res.status(200).json(couposListValid);
+        
+    }
     
     async deleteCouponByID(req,res)
     {

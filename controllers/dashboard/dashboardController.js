@@ -20,7 +20,7 @@ class DashboardController
         return await OrderComplete.countDocuments();
     }
 
-    async getTopFiveProductBestSell()
+    async getTopFiveProductBestSell(req,res)
     {
         let listProduct =await ItemOrder.aggregate([
         {
@@ -47,7 +47,7 @@ class DashboardController
         }
         ]);
         console.log(listProduct);
-        return listProduct;
+        return res.status(200).json({listProduct});
     }
 
 
