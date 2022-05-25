@@ -50,6 +50,13 @@ class DashboardController
         return res.status(200).json({listProduct});
     }
 
+    async getLatestOrder(req,res)
+    {
+        const orderlatest= await Order.find().sort({"createdAt":-1}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
+
+        return res.status(200).json({"orderlist":orderlatest});
+    }
+
 
 
 }

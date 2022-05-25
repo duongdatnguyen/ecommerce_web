@@ -24,6 +24,7 @@ const coupon=require("./router/api/coupon/coupon");
 // const schedule_app=require("./services/jobSchedule");
 const ownercoupons=require("./router/api/coupon/ownercoupons");
 const dashboards= require("./router/api/dashboard/dashboard");
+const statistics= require("./router/api/statistics/statistics");
 
 app.use(session({ secret: 'thisissercet',
                 resave: false,
@@ -49,7 +50,7 @@ app.use("/orders",order);
 app.use("/ordercompletes",ordercompleted);
 app.use("/pay",paymentRouter);
 app.use("/dashboards",dashboards);
-
+app.use("/statistics",statistics);
 
 const PORT=process.env.PORT||8080;
 

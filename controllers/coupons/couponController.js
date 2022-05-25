@@ -25,7 +25,7 @@ class CouponsController
     {
 
         const couponId=req.params.couponId;
-        const {nameVouncher,description,discountPercent,statusCoupon,dateStart,datEnd,priceOrderLimit,priceOrderMax}=req.body;
+        const {nameVouncher,description,discountPercent,statusCoupon,dateStart,dateEnd,priceOrderLimit,priceOrderMax}=req.body;
 
         const coupon=await Coupon.findById(couponId);
        
@@ -45,9 +45,9 @@ class CouponsController
         {
             coupon.dateStart=dateStart;
         }
-        if(datEnd !=null)
+        if(dateEnd !=null)
         {
-            coupon.dateEnd=dateStart;
+            coupon.dateEnd=dateEnd;
         }
         if(priceOrderLimit !=null)
         {
