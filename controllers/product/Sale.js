@@ -93,6 +93,21 @@ class SaleController
         res.status(200).json(sale);
         
     }
+
+    async getByProductId(req,res)
+    {
+        
+        const productId=req.params.productId;
+
+        const sale=await Sale.find({"productId":productId}).populate("productId");
+        if(!sale)
+        {
+            res.status(400).json({"messsage":"Sale is null"});
+        }
+
+        res.status(200).json(sale);
+        
+    }
     async getAllSale(req,res)
     {
         

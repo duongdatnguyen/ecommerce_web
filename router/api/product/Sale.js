@@ -10,4 +10,6 @@ router.delete("/:saleId",async(req,res)=>saleController.deleteSaleByID(req,res))
 router.get("/",async(req,res)=>saleController.getAllSale(req,res));
 
 router.get("/checkvalid/:saleId",async(req,res)=>saleController.checkValidSale(req,res));
+
+router.get("/product/:productId",async(req,res)=>saleController.getByProductId(req,res))
 module.exports=router;  
