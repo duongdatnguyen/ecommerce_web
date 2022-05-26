@@ -99,7 +99,7 @@ class SaleController
         
         const productId=req.params.productId;
 
-        const sale=await Sale.find({"productId":productId}).populate("productId");
+        const sale=await Sale.findOne({"productId":productId}).populate("productId");
         if(!sale)
         {
             res.status(400).json({"messsage":"Sale is null"});
