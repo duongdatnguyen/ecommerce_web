@@ -4,6 +4,9 @@ const statisticsController =require("../../../controllers/statistics/statisticsC
 
 router.get("/",async(req,res)=>statisticsController.sortOrderByTime(req,res));
 
+
+router.get("/products",async(req,res)=>statisticsController.getProductTurnover(req,res));
+router.get("/products/time",async(req,res)=>statisticsController.getStaticsProductSale(req,res));
 module.exports=router;
 
 
