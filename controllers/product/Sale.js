@@ -102,10 +102,10 @@ class SaleController
         const sale=await Sale.findOne({"productId":productId}).populate("productId");
         if(!sale)
         {
-            res.status(400).json({"messsage":"Sale is null"});
+            res.status(200).json({"messsage":"Sale is null","status":false});
         }
 
-        res.status(200).json(sale);
+        res.status(200).json({"sale":sale,"status":true});
         
     }
     async getAllSale(req,res)
