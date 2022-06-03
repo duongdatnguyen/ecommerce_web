@@ -11,6 +11,9 @@ const paypal=require("../../../services/payment");
 const sendEmail=require("../../../services/sendMail");
 const Product = require("../../../models/Product");
 const orderController=require("../../../controllers/order/orderController");
+
+const paymentVNPay=require("../../../services/paymentVNPay");
+
 router.get("/",auth,async(req,res)=>{
     const orders=await Order.find({"userId":req.user.id}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(orders.length===0)
@@ -25,7 +28,7 @@ router.post("/",auth,async(req,res)=>orderController.addItemtoOrder(req,res));
 
 /**
  * Update items in order
- * 
+ *
  * Update items in order. Udpate total price
  */
 
@@ -75,21 +78,21 @@ router.get("/getById/:OrderId",async(req,res)=>{
         query=query.sort(req.query.sort);
 
     }
-   
+
     const orders=await query;
     res.status(200).json(orders);
 })
 
 router.get("/search",async(req,res)=>{
     const queryObj={...req.query};
-    let queryStr=JSON.stringify(queryObj);  
+    let queryStr=JSON.stringify(queryObj);
     let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     if(req.query.sort)
     {
         query=query.sort(req.query.sort);
 
     }
-   
+
     const orders=await query;
     res.status(200).json(orders);
 })
@@ -103,7 +106,7 @@ router.get("/paging",async(req,res)=>{
     //const subcategoryId=req.query.subcategoryId;
     let query=Order.find(JSON.parse(queryStr)).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
     query=query.skip(parseInt(skip)).limit(parseInt(limit));
-    
+
 
 
     if(req.query.sort)
@@ -123,6 +126,60 @@ router.get("/paging",async(req,res)=>{
     const ordercompletes=await query;
     res.status(200).json(ordercompletes);
 })
+
+
+router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
+    const order= await Order.findById(req.params.orderId);
+    console.log(order);
+
+    const url = paymentVNPay.createVNPayMethod(null, "pay", req, order);
+
+    await Order.updateOne(
+        { _id: req.params.orderId },
+        {
+          $set: {
+            paymentId: url.paymentId,
+          },
+        }
+      );
+    return res.send({ vnpUrl: url.vnpUrl });
+});
+
+router.get("/payment/vnpay_ipn", async (req, res) => {
+    // try {
+      var vnp_Params = req.query;
+      var secureHash = vnp_Params["vnp_SecureHash"];
+
+      delete vnp_Params["vnp_SecureHash"];
+      delete vnp_Params["vnp_SecureHashType"];
+
+      vnp_Params = paymentVNPay.sortObject(vnp_Params);
+      var secretKey = process.env.VNP_HASHSECRET;
+      var querystring = require("qs");
+      var signData =
+        secretKey + querystring.stringify(vnp_Params, { encode: false });
+
+      var sha256 = require("sha256");
+
+      var checkSum = sha256(signData);
+
+      if (secureHash === checkSum) {
+        var paymentId = vnp_Params["vnp_TxnRef"];
+        console.log(paymentId);
+        var rspCode = vnp_Params["vnp_ResponseCode"];
+        if (rspCode === "00") {
+
+          return res.status(200).json({ RspCode: "00", Message: "success" });
+        }
+        return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
+      } else {
+        return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
+      }
+    // } catch (error) {
+    //   return res.status(200).json({ RspCode: "97", Message: error.message });
+    // }
+  });
+
 
 
 

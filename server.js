@@ -25,6 +25,7 @@ const coupon=require("./router/api/coupon/coupon");
 const ownercoupons=require("./router/api/coupon/ownercoupons");
 const dashboards= require("./router/api/dashboard/dashboard");
 const statistics= require("./router/api/statistics/statistics");
+const dotenv=require("dotenv");
 
 app.use(session({ secret: 'thisissercet',
                 resave: false,
@@ -34,6 +35,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(cors());
+dotenv.config();
 connnectDB();
 jobSchedule;
 app.use("/users",userRouter);
