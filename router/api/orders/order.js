@@ -124,14 +124,15 @@ router.get("/paging",async(req,res)=>{
 
     }
     const ordercompletes=await query;
+    
     res.status(200).json(ordercompletes);
 })
 
 
 router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
+  console.log(req.params.orderId);
     const order= await Order.findById(req.params.orderId);
     console.log(order);
-
     const url = paymentVNPay.createVNPayMethod(null, "pay", req, order);
 
     await Order.updateOne(
@@ -142,7 +143,45 @@ router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
           },
         }
       );
+      console.log(url);
+      //res.redirect(url)
     return res.send({ vnpUrl: url.vnpUrl });
+});
+
+router.get('/payment/vnpay_return', function (req, res, next) {
+  var vnp_Params = req.query;
+
+
+  
+  var secureHash = vnp_Params['vnp_SecureHash'];
+
+  delete vnp_Params['vnp_SecureHash'];
+  delete vnp_Params['vnp_SecureHashType'];
+
+  //vnp_Params = sortObject(vnp_Params);
+  vnp_Params = paymentVNPay.sortObject(vnp_Params);
+  // var config = require('config');
+  var tmnCode = process.env.VNP_TMNCODE;
+  var secretKey = process.env.VNP_HASHSECRET;
+
+  // var tmnCode = config.get('vnp_TmnCode');
+  // var secretKey = config.get('vnp_HashSecret');
+ 
+  var querystring = require("qs");
+  var signData =
+    secretKey + querystring.stringify(vnp_Params, { encode: false });
+
+  var sha256 = require("sha256");
+
+  var checkSum = sha256(signData);
+
+  if(secureHash === checkSum){
+      //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+
+      return res.status(200).json({ RspCode: "00", Message: "success" });
+  } else{
+    return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
+  }
 });
 
 router.get("/payment/vnpay_ipn", async (req, res) => {

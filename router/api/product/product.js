@@ -89,7 +89,7 @@ router.post("/images/:productId",multerService.single("photo"),async(req,res)=>{
         }
     const newPath=await uploadCloud(req.file.path);
     
-    productUpdate.images.push(newPath.url);
+    productUpdate.imageMain=newPath.url;
     await productUpdate.save();
     return res.status(200).json(productUpdate);
 })

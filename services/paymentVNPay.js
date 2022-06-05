@@ -21,8 +21,8 @@ module.exports.createVNPayMethod=function (  payId,
     type,
     req,
     order){
-
-        var dateFormat = require("dateformat");
+      console.log(order);
+      var dateFormat = require("dateformat");
 
         var ipAddr =
           req.headers["x-forwarded-for"] ||
@@ -33,7 +33,7 @@ module.exports.createVNPayMethod=function (  payId,
         var secretKey = process.env.VNP_HASHSECRET;
         var vnpUrl = process.env.VNP_URL;
         var returnUrl =
-          process.env.URL_FROND_END.toString() + "orders/" + order._id.toString();
+          process.env.URL_FROND_END.toString();
 
         var date = new Date();
 

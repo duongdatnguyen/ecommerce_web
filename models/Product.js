@@ -40,6 +40,9 @@ const ProductSchema=mongoose.Schema({
       images:{
         type:Array
       },
+      imageMain:{
+        type: String,
+      },
       dateCreate: {
         type: Date,
         default: Date.now,
