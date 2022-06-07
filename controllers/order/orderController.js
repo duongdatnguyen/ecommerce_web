@@ -12,16 +12,22 @@ class OrderController{
     async addQuantityProductAgain(order)
     {
         let itemList=order.items;
-
-        let sizeName;
-        let colorName;
-        let quantity;
-        for( let item in itemList)
+        for( let item of itemList)
         {       
-            let size=Size.findOne({"productId":item.productId});
-            let colors=size.colors;
+            let size= await Size.findOne({"productId":item.productId._id,"nameSize":item.sizeName});
+            //let colors=size.colors;
             
+            let indexOf= size.colors.findIndex(color => color.colorName==item.colorName);
 
+            if(indexOf >=0)
+            {
+                        let quantityBefore=size.colors[indexOf].quantity;
+
+
+                        size.colors[indexOf].quantity=quantityBefore+ item.quantity;
+                        await size.save();
+
+            }
         }
     }
 

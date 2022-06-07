@@ -71,8 +71,10 @@ router.delete("/:orderId",auth,async(req,res)=>{
         }
         await Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}));
         const orderResult=await Order.findById(req.params.orderId).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
-
+        if(req.body.status =="Cancel")
+        {
         await orderController.addQuantityProductAgain(orderResult);
+        }
         return res.status(200).json(orderResult);
 });
 
