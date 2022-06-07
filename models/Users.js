@@ -66,9 +66,7 @@ const UserSchema=new mongoose.Schema({
               required: true,
             },
             street:{
-              type:String,
-              required:true,
-              min:3
+              type:String
             },
             nameCustomer:{
               type:String,

@@ -33,8 +33,6 @@ class ValidationUser
       .run(req);
       await check('ward').isLength({ min: 1 }).withMessage("Please enter district")
       .run(req);
-      await check('street').isLength({ min: 1 }).withMessage("Please enter district")
-      .run(req);
       const result = validationResult(req);
         if (!result.isEmpty()) {
           console.log(result);

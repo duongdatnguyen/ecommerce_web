@@ -13,14 +13,13 @@ const auth = require("../../../midleware/auth");
  */
 
 router.post("/",[auth,validatonUser.checkValidAddress],async(req,res)=>{
-    const {city,district,ward,street,nameCustomer,detailAddress,phoneNumber,...rest}=req.body;
+    const {city,district,ward,nameCustomer,detailAddress,phoneNumber,...rest}=req.body;
     const newaddress={};
 
 
     if(city) newaddress.city=city;
     if(district) newaddress.district=district;
     if(ward) newaddress.ward=ward;
-    if(street) newaddress.street=street;
     if(nameCustomer) newaddress.nameCustomer=nameCustomer;
     if(detailAddress) newaddress.detailAddress=detailAddress;
     if(phoneNumber) newaddress.phoneNumber=phoneNumber;
@@ -103,12 +102,12 @@ router.put("/:addressid",auth,async(req,res)=>{
         res.status(400).json({"msg":"Address is null", "status":false});
     }
 
-    const {city,district,ward,street,nameCustomer,detailAddress,phoneNumber, isdefault,...rest}=req.body;
+    const {city,district,ward,nameCustomer,detailAddress,phoneNumber, isdefault,...rest}=req.body;
 
     if(city) user.addresses[index].city=city;
     if(district) user.addresses[index].district=district;
     if(ward) user.addresses[index].ward=ward;
-    if(street) user.addresses[index].street=street;
+    
     if(nameCustomer) user.addresses[index].nameCustomer=nameCustomer;
     if(detailAddress) user.addresses[index].detailAddress=detailAddress;
     if(phoneNumber) user.addresses[index].phoneNumber=phoneNumber;
