@@ -68,6 +68,9 @@ const UserSchema=new mongoose.Schema({
             street:{
               type:String
             },
+            gender:{
+              type:String
+            },
             nameCustomer:{
               type:String,
               
