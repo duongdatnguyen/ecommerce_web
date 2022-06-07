@@ -38,7 +38,7 @@ router.post("/",[auth,validatonUser.checkValidAddress],async(req,res)=>{
         user.addresses.unshift(newaddress);
 
         await user.save();
-        res.status(200).json(user);
+        res.status(200).json({"user":user,"status":true});
     }
     catch(error)
     {
