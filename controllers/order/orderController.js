@@ -9,6 +9,35 @@ const SaleController=require("../../controllers/product/Sale");
 class OrderController{
 
 
+    async addQuantityProductAgain(order)
+    {
+        let itemList=order.items;
+
+        let sizeName;
+        let colorName;
+        let quantity;
+        for( let item in itemList)
+        {       
+            let size=Size.findOne({"productId":item.productId});
+            let colors=size.colors;
+            
+
+        }
+    }
+
+
+    async getByStatus(req,res)
+    {
+        const statusCheck=req.query.statusCheck;
+
+        const orderList= await Order.find({"status":statusCheck}).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }}).populate({path:"userId",select: ["fistname", "lastname","email"]});
+
+        res.status(200).json({orders:orderList});
+    } 
+
+
+
+
     async addItemtoOrder(req,res)
     {
         const userOrder=await Users.findById(req.body.userId);

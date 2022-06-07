@@ -88,6 +88,55 @@ router.get("/",auth,async(req,res)=>{
     {
         res.status(400).json({error:[{"msg":error}]});
     }
+});
+
+
+router.put("/:addressid",auth,async(req,res)=>{
+
+    let addressId=req.params.addressid;
+    const user=await User.findById(req.user.id).select("-password");
+
+    const index=user.addresses.map(item=>item.id).indexOf(addressId);
+
+    if(index<0)
+    {
+        res.status(400).json({"msg":"Address is null", "status":false});
+    }
+
+    const {city,district,ward,street,nameCustomer,detailAddress,phoneNumber, isdefault,...rest}=req.body;
+
+    if(city) user.addresses[index].city=city;
+    if(district) user.addresses[index].district=district;
+    if(ward) user.addresses[index].ward=ward;
+    if(street) user.addresses[index].street=street;
+    if(nameCustomer) user.addresses[index].nameCustomer=nameCustomer;
+    if(detailAddress) user.addresses[index].detailAddress=detailAddress;
+    if(phoneNumber) user.addresses[index].phoneNumber=phoneNumber;
+
+
+    user.addresses[index].default=isdefault;
+    if(isdefault)
+    {
+        for(let i=0;i<user.addresses.length;i++)
+        {
+            if(user.addresses[i].id !=addressId)
+            {
+                user.addresses[i].default=false;
+            }
+        }
+    }
+    else
+    {
+        const removeIndex=user.addresses.map(item=>item.default).indexOf(true);
+
+        if(removeIndex<0)
+        {
+            user.addresses[0].default=true;
+        }
+    }
+
+    await user.save();
+    res.status(200).json({"user":user,"status":true});
 })
 
 

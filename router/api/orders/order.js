@@ -26,6 +26,9 @@ router.get("/",auth,async(req,res)=>{
 
 router.post("/",auth,async(req,res)=>orderController.addItemtoOrder(req,res));
 
+
+router.get("/search/condition",async(req,res)=>orderController.getByStatus(req,res));
+
 /**
  * Update items in order
  *
@@ -67,7 +70,9 @@ router.delete("/:orderId",auth,async(req,res)=>{
             return res.status(400).json(new AppError("Order is not exist"));
         }
         await Order.findByIdAndUpdate(orderId,({$set:{status:req.body.status}}));
-        const orderResult=await Order.findById(req.params.orderId);
+        const orderResult=await Order.findById(req.params.orderId).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+
+        await orderController.addQuantityProductAgain(orderResult);
         return res.status(200).json(orderResult);
 });
 
@@ -126,7 +131,12 @@ router.get("/paging",async(req,res)=>{
     const ordercompletes=await query;
     
     res.status(200).json(ordercompletes);
-})
+});
+
+
+
+
+
 
 
 router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
