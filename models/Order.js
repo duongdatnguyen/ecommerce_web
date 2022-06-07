@@ -64,6 +64,11 @@ const OrderSchema=mongoose.Schema({
     isPaypal:
     {
         type:Boolean
+    },
+    paymentMethod:{
+      type:String,
+      enum:["None","Paypal","VnPay"],
+      default:"None"
     }
 });
 

@@ -27,17 +27,17 @@ class ValidationUser
     }
     async checkValidAddress(req,res,next)
     {
-      await check('city').isLength({ min: 1 }).withMessage("Please enter city")
-      .run(req);
-      await check('district').isLength({ min: 1 }).withMessage("Please enter district")
-      .run(req);
-      await check('ward').isLength({ min: 1 }).withMessage("Please enter district")
-      .run(req);
-      const result = validationResult(req);
-        if (!result.isEmpty()) {
-          console.log(result);
-          return res.status(400).json({ errors: result.array() });
-        }
+      // await check('city').isLength({ min: 1 }).withMessage("Please enter city")
+      // .run(req);
+      // await check('district').isLength({ min: 1 }).withMessage("Please enter district")
+      // .run(req);
+      // await check('ward').isLength({ min: 1 }).withMessage("Please enter district")
+      // .run(req);
+      // const result = validationResult(req);
+      //   if (!result.isEmpty()) {
+      //     console.log(result);
+      //     return res.status(400).json({ errors: result.array() });
+      //   }
         next();
     }
 }

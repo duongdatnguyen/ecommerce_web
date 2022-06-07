@@ -6,6 +6,7 @@ const Order=require("../../models/Order");
 const sendEmail=require("../../services/sendMail");
 const { check } = require("express-validator");
 const SaleController=require("../../controllers/product/Sale");
+const MessageSendEmail=require("../../contants/MessageSendEmail");
 class OrderController{
 
 
@@ -67,6 +68,10 @@ class OrderController{
     orderAdd.address=req.body.address;
     orderAdd.paymentId=req.body.paymentId;
     orderAdd.isPaypal=req.body.isPaypal;
+    if(req.body.isPaypal)
+    {
+        orderAdd.paymentMethod="Paypal";
+    }
     orderAdd.priceDiscount =req.body.priceDiscount;
 
     let checkAddItemSucces=this.checkAddItemSuccess(items,itemIds);
@@ -75,16 +80,18 @@ class OrderController{
     {
         
         await orderAdd.save();
-    
-        const message={ // thiết lập đối tượng, nội dung gửi mail
-            from: 'Ecomerce web',
-            to: userOrder.email,
-            subject: 'Order success',
-            text: "You recieved message from",
-            html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
-        }
+        //const message=MessageSendEmail(orderAdd);
+        // const message={ // thiết lập đối tượng, nội dung gửi mail
+        //     from: 'Ecomerce web',
+        //     to: "nguyenduongdat0308@gmail.com",
+        //     subject: 'Order success',
+        //     text: "You recieved message from",
+        //     html: `<p>you have order complete. Please waiting admin check order. Your order have total price ${orderAdd.totalPrice} <p>`
+        // }
         //sendEmail(message);
         // console.log(message);
+        
+        //await sendEmail(message);
         return res.status(200).json(orderAdd);
     }
     else{

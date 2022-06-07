@@ -115,12 +115,14 @@ router.get("/paging",async(req,res)=>{
     query=query.skip(parseInt(skip)).limit(parseInt(limit));
 
 
+    query=query.sort({"createdAt": -1 });
+    // if(req.query.sort)
+    // {
+    //   const sortType=req.query.sort;
+    //   console.log(sortType);
+    //     query=query.sort({sortType: -1 });
 
-    if(req.query.sort)
-    {
-        query=query.sort(req.query.sort);
-
-    }
+    // }
     if(req.query.page)
     {
         const numUsers=await Order.countDocuments();
@@ -156,11 +158,11 @@ router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
         }
       );
       console.log(url);
-      //res.redirect(url)
-    return res.send({ vnpUrl: url.vnpUrl });
+      return res.redirect(url.vnpUrl);
+    //return res.send({ vnpUrl: url.vnpUrl });
 });
 
-router.get('/payment/vnpay_return', function (req, res, next) {
+router.get('/payment/vnpay_return', async (req, res, next) => {
   var vnp_Params = req.query;
 
 
@@ -189,8 +191,17 @@ router.get('/payment/vnpay_return', function (req, res, next) {
 
   if(secureHash === checkSum){
       //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+    const orderId=vnp_Params["vnp_OrderInfo"];
+    const order= await Order.findById(orderId);
+    const paymentId=vnp_Params["vnp_TxnRef"];
+    order.paymentMethod="VnPay";
+    order.isPaypal=true;
+    order.paymentId=paymentId;
 
-      return res.status(200).json({ RspCode: "00", Message: "success" });
+    await order.save();
+    const redirect=process.env.URL_SYSTEM+"order";
+    return res.redirect(redirect);
+      //return res.status(200).json({ RspCode: "00", Message: "success" });
   } else{
     return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
   }

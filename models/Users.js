@@ -52,19 +52,43 @@ const UserSchema=new mongoose.Schema({
         addresses:[
           {
             city:{
-              type:String,
-              required:true,
-              min:3
+              value:{
+                type:String
+              },
+              label:{
+                type:String
+              }
             },
             district:{
-              type:String,
-              required:true,
-              min:3
+              value:{
+                type:String
+              },
+              label:{
+                type:String
+              }
             },
             ward: {
-              type: String,
-              required: true,
+              value:{
+                type:String
+              },
+              label:{
+                type:String
+              }
             },
+            // city:{
+            //   type:String,
+            //   required:true,
+            //   min:3
+            // },
+            // district:{
+            //   type:String,
+            //   required:true,
+            //   min:3
+            // },
+            // ward: {
+            //   type: String,
+            //   required: true,
+            // },
             street:{
               type:String
             },
