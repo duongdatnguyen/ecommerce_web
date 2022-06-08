@@ -186,11 +186,10 @@ router.get("/",async(req,res)=>{
 
 
 router.get("/search/*",async(req,res)=>{
-    console.log(req.query);
-    const string_search=req.params.stringSearch;
+    const string_search=req.query.stringSearch;
     let products=null;
     let regex = new RegExp(string_search,'i');
-    products= await Product.find({$or:[{"name":regex},{"orgin":regex},{"material":regex}]})
+    products= await Product.find({"name":regex})
     .populate("subcategoryId").populate("size");
 
     if(products==null)
@@ -202,5 +201,14 @@ router.get("/search/*",async(req,res)=>{
 });
 
 
+
+router.get('/searchUI/byName',async(req,res)=>{
+    const product =await Product.find().select("name");
+    if(!product)
+    {
+       return res.status(400).json(new AppError("Product haven't exist"));
+    }
+   return res.status(200).json(product);
+});
 
 module.exports=router;
