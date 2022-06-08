@@ -50,6 +50,10 @@ router.post("/auth",async(req,res)=>{
             }
             else
             {
+              if(!user.status)
+              {
+                return res.status(400).json({error:[{"msg":"User have deleted in the system"}]});
+              }
                 let isMatch=await bcrypt.compare(password,user.password);
                 console.log(isMatch);
 
@@ -215,6 +219,11 @@ router.post("/googlelogin",async(req,res)=>{
               }
             );
           }
+          if(!existingUser.status)
+              {
+                return res.status(400).json({error:[{"msg":"User have deleted in the system"}]});
+              }
+
           const payload={
                     user:
                     {id:existingUser.id},

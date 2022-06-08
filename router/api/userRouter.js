@@ -222,6 +222,17 @@ router.put("/update",auth,validatonUser.checkValidUser,async(req,res)=>{
         res.status(400).json({error:[{"msg":error}]});
     }
     
+});
+
+router.delete("/",auth,async(req,res)=>{
+    const userdelete=await User.findById(req.user.id);
+    if(!userdelete)
+    {
+        res.status(400).json(new AppError("User is null"));
+    }
+        await User.findByIdAndUpdate(req.user.id,{$set:{status:false}});
+        const result=await User.findById(req.user.id);
+        res.status(200).json(result);
 })
 
 
