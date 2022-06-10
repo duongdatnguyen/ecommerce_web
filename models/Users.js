@@ -129,6 +129,12 @@ const UserSchema=new mongoose.Schema({
         },
         month:{
           type:String,
+        },
+        token:{
+          type:String
+        },
+        timeValidtoken:{
+          type:Date
         }
 
 });

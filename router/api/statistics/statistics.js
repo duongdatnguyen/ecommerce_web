@@ -15,7 +15,7 @@ router.get("/products/time",async(req,res)=>statisticsController.getStaticsProdu
 
 
 
-router.get("/googleAnalytics",async(req,res)=>googleAnalytics.getDataFromGoogle());
+router.get("/googleAnalytics",async(req,res)=>googleAnalytics.getDataFromGoogle(req,res));
 module.exports=router;
 
 

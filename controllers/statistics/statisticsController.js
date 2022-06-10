@@ -7,7 +7,6 @@ const OrderCompleted =require ("../../models/OrderCompleted");
 
 
 
-
 class StatisticsController
 {
 
@@ -47,30 +46,30 @@ class StatisticsController
     async getProductTurnover(req,res)
     {
         let result=await ItemOrder.aggregate([
-            {
-              '$group': {
-                '_id': '$_id', 
-                'turnover': {
-                  '$sum': '$totalPrice'
-                }
-              }
-            }, {
-              '$lookup': {
-                'from': 'products', 
-                'localField': '_id', 
-                'foreignField': '_id', 
-                'as': 'result'
-              }
-            }, {
-              '$unwind': {
-                'path': '$result'
-              }
-            }, {
-              '$sort': {
-                'count': -1
+          {
+            '$group': {
+              '_id': '$_id', 
+              'profit': {
+                '$sum': '$totalPrice'
               }
             }
-          ]);
+          }, {
+            '$lookup': {
+              'from': 'products', 
+              'localField': '_id', 
+              'foreignField': '_id', 
+              'as': 'product'
+            }
+          }, {
+            '$unwind': {
+              'path': '$product'
+            }
+          }, {
+            '$sort': {
+              'profit': -1
+            }
+          }
+        ]);
           res.status(200).json(result);
         
     }

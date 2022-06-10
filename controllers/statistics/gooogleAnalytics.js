@@ -1,4 +1,4 @@
-module.exports.getDataFromGoogle= async function  getDataFromGoogle()
+module.exports.getDataFromGoogle= async function  getDataFromGoogle(req,res)
 {
     const clientEmail = process.env.CLIENT_EMAIL;
 const privateKey = process.env.PRIVATE_KEY
@@ -38,25 +38,28 @@ const jwt = new google.auth.JWT(process.env.CLIENT_EMAIL, null, process.env.PRIV
 const viewId="268322270";
 
   const response = await jwt.authorize();
-  console.log("Go to get result");
+  //console.log("Go to get result");
   const result = await google.analytics('v3').data.ga.get({
     'auth': jwt,
     'ids': `ga:${viewId}`,
     'start-date': '30daysAgo',
     'end-date': 'today',
-    'metrics': 'ga:pageviews'
+    'dimensions': 'ga:searchKeyword',
+    //'metrics': 'ga:searchSessions'
+    'metrics': 'ga:searchResultViews'
   })
 
 
 
+   //console.log(result.data.rows);
+  // console.log('Report result:',result.data.rows[0]);
 
-  console.log('Report result:',result.data.rows[0][0]);
-//   result.data.rows.forEach(row => {
-//     console.log(row.dimensionValues[0], row.metricValues[0]);
-//   });
+const listTrending=result.data.rows.sort((a,b)=>(a[1]*1>=b[1]*1) ?-1 :1).map(row =>row[0]);
+  // result.data.rows.forEach(row => {
+  //   console.log(row[0], row[1]);
+  // });
 
-//   console.log(result);
-//   return result;
+   return res.status(200).json({"listTrending":listTrending});
 
 
 }

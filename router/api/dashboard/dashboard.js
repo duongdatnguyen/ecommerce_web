@@ -8,4 +8,6 @@ router.get("/fiveproduct",async(req,res)=>DashboardController.getTopFiveProductB
 
 router.get("/latestorder",async(req,res)=>DashboardController.getLatestOrder(req,res));
 
+router.get("/totalField",async(req,res)=>DashboardController.countDashboard(req,res));
+
 module.exports=router;  

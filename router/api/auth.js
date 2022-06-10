@@ -253,7 +253,7 @@ router.post("/googlelogin",async(req,res)=>{
         });
         errorResult="Going to send email";
         const message={ // thiết lập đối tượng, nội dung gửi mail
-          from: 'Ecomerrce tieu luan chuyen nganh',
+          from: 'Ecomerrce KLTN',
           to: user.email,
           subject: 'Create new account',
           text: "Tài khoản của bạn đã được đăng nhập vào website",
@@ -274,8 +274,98 @@ router.post("/googlelogin",async(req,res)=>{
         return res.status(200).json({jwt:token,user:saveUser});
     })
    }
+})
+
+router.post("/resetpassword/generate-token",async(req,res)=>{
+
+  const emailReset=req.query.email;
+
+  const userReset=await User.findOne({"email":emailReset});
+
+  const token = generator.generate({
+    length: 10,
+    numbers: true,
+  });
+
+  const salt = await bcrypt.genSalt(10);
+  const tokenHash = await bcrypt.hash(token, salt);
+
+  userReset.token=tokenHash;
+
+  let time= Date.now()+10*60*1000;
+  userReset.timeValidtoken=time;
+
+  let resetURL=process.env.URL_SYSTEM +"/reset-password/"+`${tokenHash}`;
+  const message={ // thiết lập đối tượng, nội dung gửi mail
+    from: 'Ecomerrce KLTN',
+     to: userReset.email,
+    //to: "nguyenduongdat0308@gmail.com",
+    subject: 'Reset password',
+    text: "Tài khoản của bạn đã yêu cầu đổi mật khẩu",
+    html: `
+    <div style="max-width: 700px; margin:auto; border: 4px solid #ddd; padding: 50px 20px; font-size: 110%;">
+    <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the Ecommerce website</h2>
+    <p>Just click the button below to reset your password !</p>
+    
+    <a href=${resetURL} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">Reset password</a>
+
+    <p>If the button doesn't work for any reason, you can also click on the link below:</p>
+
+    <div>${resetURL}</div>
+    </div>
+`
 }
-)
+ await sendEmail(message);
+
+
+await userReset.save();
+
+
+return res.status(200).json({"message":"Please check your email to reset password"});
+
+});
+
+
+
+router.put("/resetpassword/reset/:token",async(req,res)=>{
+  const tokenCheck=req.params.token;
+  const userUpdate= await User.findOne({
+                                          "token":tokenCheck,
+                                          "timeValidtoken":{$gt:Date.now()}});
+
+  if(!userUpdate)
+  {
+    res.status(400).json({"error":"User is null"});
+  };
+
+
+
+  const password= req.query.password;
+console.log(password);
+  
+  const salt = await bcrypt.genSalt(10);
+  let passwordhashed=await bcrypt.hash(password,salt);
+
+
+  userUpdate.password=passwordhashed;
+
+  //reset token and time valids
+  userUpdate.token="";
+  userUpdate.timeValidtoken=null;
+
+
+  await userUpdate.save();
+
+  const payload={
+    user:
+    {id:userUpdate.id},
+}
+
+jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+    if(error) return  res.json({error:[{"msg":error}]});
+    return res.status(200).json({jwt:token,user:userUpdate});
+})
+})
 
 
 
