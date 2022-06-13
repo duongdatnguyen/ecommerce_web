@@ -1,6 +1,8 @@
 const express=require("express");
 const AppError = require("../../../models/AppError");
 const Order = require("../../../models/Order");
+
+const orderController=require("../../../controllers/order/orderController");
 const OrderCompleted = require("../../../models/OrderCompleted");
 const router=express.Router();
 
@@ -54,6 +56,19 @@ router.put("/status/:id",async(req,res)=>{
         res.status(400).json(new AppError("Order haven't exist"));
     }
     ordercompletedExist.status=req.body.status;
+
+    if(ordercompletedExist.status =="Failed")
+    {
+        const order= await Order.findById(ordercompletedExist.orderId).populate({path:"items",populate: { path: "productId", select: ["name", "price"] }});
+
+        //console.log(order);
+        await orderController.addQuantityProductAgain(order);
+
+        //Add feilds FailedShipping
+        order.status="FailedShipping";
+
+        await order.save();
+    }
     await ordercompletedExist.save();
     //const orderResult=await OrderCompleted.findByIdAndUpdate((req.params.id,{ $set: { status: req.body.status}}));
     res.status(200).json(ordercompletedExist);
