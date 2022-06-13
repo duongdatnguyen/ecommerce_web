@@ -51,7 +51,7 @@ const viewId="268322270";
 
 
 
-   //console.log(result.data.rows);
+   console.log(result.data.rows);
   // console.log('Report result:',result.data.rows[0]);
 
 const listTrending=result.data.rows.sort((a,b)=>(a[1]*1>=b[1]*1) ?-1 :1).map(row =>row[0]);
