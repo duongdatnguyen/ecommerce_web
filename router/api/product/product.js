@@ -54,7 +54,7 @@ const storage = multer.diskStorage({
       cb(null, file.originalname);
     }
   })
-  router.post('/imagesMutiple/:productId', multerService.fields([{"name":"photo0", maxCount:1},{"name":"photo1", maxCount:1},{"name":"photo2", maxCount:1},{"name":"photo3", maxCount:1}]), async(req, res, next)=> {
+  router.post('/imagesMutiple/:productId', multerService.array('photo', 3), async(req, res, next)=> {
     const fileinfo = req.files;
     const title = req.body.title;
     //console.log(fileinfo);
@@ -64,11 +64,11 @@ const storage = multer.diskStorage({
         {
             return res.status(400).json(new AppError("Product does not exist!!!"));
         }
-    productUpdate.images=[];
-    for(file in fileinfo)
+
+        productUpdate.images=[];
+    for(file of fileinfo)
     {
-        //console.log(fileinfo[file][0].path);
-        let newPath=await uploadCloud(fileinfo[file][0].path);
+        let newPath=await uploadCloud(file.path);
         //console.log(file);
         productUpdate.images.push(newPath.url);
     }
