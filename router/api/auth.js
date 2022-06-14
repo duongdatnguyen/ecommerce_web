@@ -328,8 +328,8 @@ return res.status(200).json({"message":"Please check your email to reset passwor
 
 
 
-router.put("/resetpassword/reset/:token",async(req,res)=>{
-  const tokenCheck=req.params.token;
+router.put("/resetpassword/reset",async(req,res)=>{
+  const tokenCheck=req.body.token;
   const userUpdate= await User.findOne({
                                           "token":tokenCheck,
                                           "timeValidtoken":{$gt:Date.now()}});
@@ -341,8 +341,7 @@ router.put("/resetpassword/reset/:token",async(req,res)=>{
 
 
 
-  const password= req.query.passwordNew;
-console.log(password);
+  const password= req.body.passwordNew;
   
   const salt = await bcrypt.genSalt(10);
   let passwordhashed=await bcrypt.hash(password,salt);
