@@ -134,4 +134,25 @@ router.get("/search",async(req,res)=>{
     res.status(200).json(orders);
 });
 
+router.get("/search/getByEmail",async(req,res)=>{
+    const email=req.query.email;
+const status=req.query.status;
+
+    let query=OrderCompleted.find({"status":status}).populate({path:"orderId",populate: {
+        path:"items", select:["productId","quantity","totalPrice"]
+        ,populate: { path: "productId", select: ["name", "price"]
+        
+                }}
+            }).populate({path:"orderId",populate: {
+                path: "userId", select: ["fistname", "lastname","email"]}}).sort({"createdAt":-1});
+
+                const orders=await query;
+
+        const orderResult=orders.filter(order=>order.orderId.userId.email ==email)
+        ;
+
+        res.status(200).json(orderResult);
+        
+})
+
 module.exports=router;
