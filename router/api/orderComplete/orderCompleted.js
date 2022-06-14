@@ -1,7 +1,7 @@
 const express=require("express");
 const AppError = require("../../../models/AppError");
 const Order = require("../../../models/Order");
-
+const auth = require("../../../midleware/auth");
 const orderController=require("../../../controllers/order/orderController");
 const OrderCompleted = require("../../../models/OrderCompleted");
 const router=express.Router();
@@ -134,9 +134,11 @@ router.get("/search",async(req,res)=>{
     res.status(200).json(orders);
 });
 
-router.get("/search/getByEmail",async(req,res)=>{
-    const email=req.query.email;
-const status=req.query.status;
+router.get("/search/getByEmail",auth,async(req,res)=>{
+    //const email=req.query.email;
+    const userId=req.user.id;
+    //console.log(userId);
+    const status=req.query.status;
 
     let query=OrderCompleted.find({"status":status}).populate({path:"orderId",populate: {
         path:"items", select:["productId","quantity","totalPrice"]
@@ -148,7 +150,7 @@ const status=req.query.status;
 
                 const orders=await query;
 
-        const orderResult=orders.filter(order=>order.orderId.userId.email ==email)
+        const orderResult=orders.filter(order=>order.orderId.userId._id == userId)
         ;
 
         res.status(200).json(orderResult);
