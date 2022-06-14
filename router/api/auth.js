@@ -341,7 +341,7 @@ router.put("/resetpassword/reset/:token",async(req,res)=>{
 
 
 
-  const password= req.query.password;
+  const password= req.query.passwordNew;
 console.log(password);
   
   const salt = await bcrypt.genSalt(10);
