@@ -278,7 +278,8 @@ router.post("/googlelogin",async(req,res)=>{
 
 router.post("/resetpassword/generate-token",async(req,res)=>{
 
-  const emailReset=req.query.email;
+  // const emailReset=req.query.email;
+  const emailReset=req.body.email;
 
   const userReset=await User.findOne({"email":emailReset});
 
