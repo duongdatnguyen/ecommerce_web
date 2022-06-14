@@ -296,7 +296,7 @@ router.post("/resetpassword/generate-token",async(req,res)=>{
   let time= Date.now()+10*60*1000;
   userReset.timeValidtoken=time;
 
-  let resetURL=process.env.URL_SYSTEM +"/reset-password/"+`${tokenHash}`;
+  let resetURL=process.env.URL_SYSTEM +"reset-password/"+`${tokenHash}`;
   const message={ // thiết lập đối tượng, nội dung gửi mail
     from: 'Ecomerrce KLTN',
      to: userReset.email,
