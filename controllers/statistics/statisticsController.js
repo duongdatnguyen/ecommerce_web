@@ -16,11 +16,11 @@ class StatisticsController
         let orderCompleteList=[];
         let startDate=new Date(req.query.startDate);
         let enddate=new Date(req.query.endDate);
+        let endDate_last_date=new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate(), 23, 59, 59, 59);
         
-
         let totalTurnover=0;
         let startDate_number=startDate.getTime();
-        let enddate_number=enddate.getTime();
+        let enddate_number=endDate_last_date.getTime();
         const ordercompletes =await OrderCompleted.find({"status":"Done"}).populate({path:"orderId",populate: {
                                 path:"items", select:["productId","quantity","totalPrice"]
                                 ,populate: { path: "productId", select: ["name", "price"]
@@ -31,6 +31,12 @@ class StatisticsController
         for( let ordercomplete of ordercompletes)
         {
             let dateCheck= ordercomplete.createdAt.getTime();
+            if(req.query.startDate == undefined  || req.query.endDate == undefined)
+            {
+              totalTurnover+=ordercomplete.totalPrice;
+              orderCompleteList.push(ordercomplete);
+            }
+            else{
             if(dateCheck>=startDate_number &&  dateCheck<=enddate_number)
             {
                 totalTurnover+=ordercomplete.totalPrice;
@@ -38,6 +44,7 @@ class StatisticsController
             }
             
         }
+      }
         res.status(200).json({"listOrder":orderCompleteList,"totalTurnover":totalTurnover});
     }
 
@@ -131,13 +138,17 @@ class StatisticsController
 
 
         let productStatisticList=[];
+        let totalTurnover=0;
+        if(req.query.startDate != undefined  && req.query.endDate != undefined)
+        {
+         
         let startDate=new Date(req.query.startDate);
         let enddate=new Date(req.query.endDate);
-        
+        let endDate_last_date=new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate(), 23, 59, 59, 59);
 
-        let totalTurnover=0;
         let startDate_number=startDate.getTime();
-        let enddate_number=enddate.getTime();
+        let enddate_number=endDate_last_date.getTime();
+
         for( let statisticItem of result)
         {
             let dateCheck= statisticItem.createdAt.getTime();
@@ -147,6 +158,11 @@ class StatisticsController
             }
             
         }
+      }
+      else
+      {
+        productStatisticList.push(...result);
+      }
 
         let productListCount=[];
 
