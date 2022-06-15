@@ -92,6 +92,9 @@ class OrderController{
         // console.log(message);
         
         //await sendEmail(message);
+        const message= await MessageSendEmail.createMessage(orderAdd._id);
+                //console.log(message);
+  await sendEmail(message);
         return res.status(200).json(orderAdd);
     }
     else{

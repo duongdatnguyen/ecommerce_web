@@ -14,6 +14,14 @@ const orderController=require("../../../controllers/order/orderController");
 
 const paymentVNPay=require("../../../services/paymentVNPay");
 
+const MessageSendEmail=require("../../../contants/MessageSendEmail");
+
+router.post("/test/api/email",async(req,res)=>{
+  const message= await MessageSendEmail.createMessage(83);
+  //console.log(message);
+  await sendEmail(message);
+});
+
 router.get("/",auth,async(req,res)=>{
 
 
