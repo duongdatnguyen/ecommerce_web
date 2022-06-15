@@ -330,6 +330,7 @@ return res.status(200).json({"message":"Please check your email to reset passwor
 
 router.put("/resetpassword/reset",async(req,res)=>{
   const tokenCheck=req.body.token;
+  console.log(tokenCheck);
   const userUpdate= await User.findOne({
                                           "token":tokenCheck,
                                           "timeValidtoken":{$gt:Date.now()}});
@@ -342,11 +343,11 @@ router.put("/resetpassword/reset",async(req,res)=>{
 
 
   const password= req.body.passwordNew;
+
   
   const salt = await bcrypt.genSalt(10);
   let passwordhashed=await bcrypt.hash(password,salt);
-
-
+  
   userUpdate.password=passwordhashed;
 
   //reset token and time valids
@@ -356,15 +357,18 @@ router.put("/resetpassword/reset",async(req,res)=>{
 
   await userUpdate.save();
 
-  const payload={
-    user:
-    {id:userUpdate.id},
-}
+//   const payload={
+//     user:
+//     {id:userUpdate.id},
+// }
 
-jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
-    if(error) return  res.json({error:[{"msg":error}]});
-    return res.status(200).json({jwt:token,user:userUpdate});
-})
+return res.status(200).json({"message":"Update password success"});
+
+
+// jwt.sign(payload,Sercet_token,{expiresIn:36000},async function(error,token){
+//     if(error) return  res.json({error:[{"msg":error}]});
+//     return res.status(200).json({jwt:token,user:userUpdate});
+// })
 })
 
 

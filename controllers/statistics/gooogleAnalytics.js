@@ -42,19 +42,30 @@ const viewId="268322270";
   const result = await google.analytics('v3').data.ga.get({
     'auth': jwt,
     'ids': `ga:${viewId}`,
-    'start-date': '30daysAgo',
+    'start-date': '7daysAgo',
+    //'start-date': 'today',
     'end-date': 'today',
     'dimensions': 'ga:searchKeyword',
     //'metrics': 'ga:searchSessions'
     'metrics': 'ga:searchResultViews'
+    //'metrics': 'ga:searchDepth'
   })
 
 
 
-   console.log(result.data.rows);
+   //console.log(result.data.rows);
   // console.log('Report result:',result.data.rows[0]);
 
-const listTrending=result.data.rows.sort((a,b)=>(a[1]*1>=b[1]*1) ?-1 :1).map(row =>row[0]);
+
+
+const listTrending=result.data.rows.sort((a,b)=>(a[1]*1>=b[1]*1) ?-1 :1).map(row =>  {
+                      let object={
+                        "key":"",
+                        "value":null
+                      };
+                  object.key=row[0], object.value=row[1]*1
+                  return object;
+                                    });
   // result.data.rows.forEach(row => {
   //   console.log(row[0], row[1]);
   // });
