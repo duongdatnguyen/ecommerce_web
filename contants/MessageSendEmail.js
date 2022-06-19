@@ -884,7 +884,7 @@ module.exports.createMessage=async function createMessage(order){
           </table>`;
   const message={ // thiết lập đối tượng, nội dung gửi mail
         from: 'Ecomerce web',
-        to: "nguyenduongdat0308@gmail.com",
+        to: orderEmail.userId.email,
         subject: 'Order success',
         text: "You recieved message from",
         html: messageBegin+
