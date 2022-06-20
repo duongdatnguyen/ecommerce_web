@@ -15,7 +15,8 @@ const cloudinary=require("../../../services/cloudinary");
     try
     {
         const subCategoryExist=await SubCategory.findOne({"namesubCategory":req.body.namesubCategory});
-        const category=await Category.findOne({"nameCategory":req.body.nameCategory});
+        //const category=await Category.findOne({"nameCategory":req.body.nameCategory});
+        const category=await Category.findById(req.body.categoryID);
         if(subCategoryExist)
         {
             return res.status(400).json(new AppError("Subcategory have exist"));
