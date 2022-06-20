@@ -72,7 +72,7 @@ router.put("/:subcateogoryId",async(req,res)=>{
             SubcategoryExist.namesubCategory=req.body.namesubCategory;
             SubcategoryExist.substatus=req.body.substatus;
             await SubcategoryExist.save();
-            return res.status(200).json(SubcategoryExist);
+            //return res.status(200).json(SubcategoryExist);
         }
            
         else
@@ -108,8 +108,10 @@ router.put("/:subcateogoryId",async(req,res)=>{
 
             const result=await SubCategory.findById(SubcategoryExist._id).populate("categoryID");
 
-            return res.status(200).json(result);
+            //return res.status(200).json(result);
         }
+        const result=await SubCategory.findById(SubcategoryExist._id).populate("categoryID");
+        return res.status(200).json(result);
     }
     catch(error)
     {
