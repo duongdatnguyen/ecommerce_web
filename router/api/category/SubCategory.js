@@ -30,10 +30,11 @@ const cloudinary=require("../../../services/cloudinary");
             }
             category.subcategories.unshift(result);
             await category.save();
+            const subcategoryOutput=await SubCategory.findById(result.id).populate("categoryID");
+            return res.status(200).json(subcategoryOutput);
             //return res.status(200).json(result);
         });
-        const result=await SubCategory.findById(subCategory._id).populate("categoryID");
-        return res.status(200).json(result);
+        
         
     }
     catch(error)
@@ -106,11 +107,11 @@ router.put("/:subcateogoryId",async(req,res)=>{
             await categoryOld.save();
             await SubcategoryExist.save();
 
-            const result=await SubCategory.findById(SubcategoryExist._id).populate("categoryID");
+            //const result=await SubCategory.findById(SubcategoryExist._id).populate("categoryID");
 
             //return res.status(200).json(result);
         }
-        const result=await SubCategory.findById(SubcategoryExist._id).populate("categoryID");
+        const result=await SubCategory.findById(SubcategoryExist.id).populate("categoryID");
         return res.status(200).json(result);
     }
     catch(error)
