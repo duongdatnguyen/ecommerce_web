@@ -170,8 +170,8 @@ router.get("/payment/vnPay/:orderId",async(req,res,next)=>{
         }
       );
       console.log(url);
-      return res.redirect(url.vnpUrl);
-    //return res.send({ vnpUrl: url.vnpUrl });
+      //return res.redirect(url.vnpUrl);
+    return res.json({ vnpUrl: url.vnpUrl });
 });
 
 router.get('/payment/vnpay_return', async (req, res, next) => {
