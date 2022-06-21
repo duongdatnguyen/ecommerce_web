@@ -147,7 +147,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
 
 //Get product
 router.get('/:idProduct',async(req,res)=>{
-        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size");
+        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size").populate("saleId");
         if(!product)
         {
            return res.status(400).json(new AppError("Product haven't exist"));
