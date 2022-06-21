@@ -106,7 +106,10 @@ router.post("/",validationProduct.checkvaliadtionProduct,async(req,res)=>{
         const proudctAdd= new Product(req.body);
 
         await proudctAdd.save();
-        return  res.status(200).json(proudctAdd);
+
+        const product =await Product.findById(proudctAdd.id).populate('subcategoryId').populate("size");
+
+        return  res.status(200).json(product);
     }
     catch(error)
     {
@@ -123,7 +126,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
             {
                 res.status(400).json(new AppError("Product haven't exist!!!"));
             }
-            const {name,orgin,material,description,price,subcategoryId,status,quantity}=req.body;
+            const {name,orgin,material,description,price,subcategoryId,status,content,quantity}=req.body;
             await Product.findByIdAndUpdate(req.params.productId,{$set:{
                                                                                 "name": name,
                                                                                 "orgin": orgin,
@@ -132,6 +135,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
                                                                                 "price": price ,
                                                                                 "subcategoryId":subcategoryId,
                                                                                 "status":status,
+                                                                                "content":content,
                                                                                 "quantity":quantity
                                                                             }});
             const productResult= await Product.findById(req.params.productId).populate('subcategoryId').populate("size");
@@ -142,7 +146,7 @@ router.put("/:productId",validationProduct.checkValidationUdpate,async(req,res)=
 
 //Get product
 router.get('/:idProduct',async(req,res)=>{
-        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("saleId");
+        const product =await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size");
         if(!product)
         {
            return res.status(400).json(new AppError("Product haven't exist"));
@@ -164,9 +168,11 @@ router.delete('/:idProduct',async(req,res)=>{
             console.log(error)
             res.status(400).json(new AppError(error));
         }
-        res.status(200).json(result);
+        
     });
-       
+
+    const productResult= await Product.findById(req.params.idProduct).populate('subcategoryId').populate("size");
+    res.status(200).json(productResult);
 });
 
 router.get("/",async(req,res)=>{

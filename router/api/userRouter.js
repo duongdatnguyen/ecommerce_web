@@ -159,6 +159,7 @@ router.put("/updatewithAdmin/:userId",auth,async(req,res)=>{
         {
             res.status(400).json({error:[{"msg":"User doesn't exist"}]});
         }
+    
         const result=await User.findByIdAndUpdate(req.params.userId,{$set:{"fistname":fistname,
                                                                         "lastname":lastname,
                                                                         "gender":gender,
@@ -202,19 +203,27 @@ router.put("/update1",auth,async(req,res)=>{
     res.json({msg:"Completed"})
 })
 router.put("/update",auth,validatonUser.checkValidUser,async(req,res)=>{
-    const {fistname,lastname,email,password,gender,phonenumber}=req.body;
+    const {fistname,lastname,date,month,email,password,gender,phonenumber}=req.body;
     try{
         const user= await User.findById(req.user.id);
         if(!user)
         {
             res.status(400).json({error:[{"msg":"User doesn't exist"}]});
         }
-        const result=await User.findByIdAndUpdate(req.user.id,{$set:{"fistname":fistname,
-                                                                        "lastname":lastname,
-                                                                        "gender":gender,
-                                                                        "phonenumber":phonenumber}});
-        const userResult= await User.findById(req.user.id);
-        res.status(200).json(userResult);
+        const result=await User.findById(req.user.id);
+        result.date=date;
+        result.month=month;
+        result.fistname=fistname;
+        result.lastname=lastname;
+        result.gender=gender;
+        result.phonenumber=phonenumber;
+        // const result=await User.findByIdAndUpdate(req.user.id,{$set:{"fistname":fistname,
+        //                                                                 "lastname":lastname,
+        //                                                                 "gender":gender,
+        //                                                                 "phonenumber":phonenumber}});
+        await result.save();
+        //const userResult= await User.findById(req.user.id);
+        res.status(200).json(result);
 
     }
     catch(error){
