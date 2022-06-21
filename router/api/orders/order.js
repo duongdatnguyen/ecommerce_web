@@ -16,6 +16,8 @@ const paymentVNPay=require("../../../services/paymentVNPay");
 
 const MessageSendEmail=require("../../../contants/MessageSendEmail");
 
+const paymentZaloPay=require("../../../services/paymentZaloPay");
+
 router.post("/test/api/email",async(req,res)=>{
   const message= await MessageSendEmail.createMessage(83);
   //console.log(message);
@@ -259,6 +261,16 @@ router.get("/payment/vnpay_ipn", async (req, res) => {
     //   return res.status(200).json({ RspCode: "97", Message: error.message });
     // }
   });
+
+
+router.get("/payment/zaloPay/:orderId",async(req,res)=>{
+  const order= await Order.findById(req.params.orderId);
+  const url= paymentZaloPay.createPaymentZalo(order);
+  //console.log(url);
+  return res.json({ zaloURL:url });
+});
+
+router.post('/payment/zaloPay/callback',async(req,res)=>paymentZaloPay.callBackURL(req,res));
 
 
 

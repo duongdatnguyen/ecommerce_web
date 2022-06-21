@@ -54,7 +54,7 @@ const storage = multer.diskStorage({
       cb(null, file.originalname);
     }
   })
-  router.post('/imagesMutiple/:productId', multerService.array('photo', 3), async(req, res, next)=> {
+  router.post('/imagesMutiple/:productId', multerService.array('photo', 4), async(req, res, next)=> {
     const fileinfo = req.files;
     const title = req.body.title;
     //console.log(fileinfo);
