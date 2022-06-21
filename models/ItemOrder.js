@@ -19,6 +19,9 @@ const ItemSchema=mongoose.Schema({
       colorName: {
         type: String,
       },
+      sizeId:{
+        type:Number
+    },
       sizeName:{
         type:String
     },

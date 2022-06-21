@@ -14,8 +14,19 @@ class OrderController{
     {
         let itemList=order.items;
         for( let item of itemList)
-        {       
-            let size= await Size.findOne({"productId":item.productId._id,"nameSize":item.sizeName});
+        {      
+            let size=null;
+
+            if(item.sizeId != null)
+            {
+                size= await Size.findById(item.sizeId);
+            }
+            else
+            {
+                size= await Size.findOne({"productId":item.productId._id,"nameSize":item.sizeName});
+            }
+
+            //let size= await Size.findOne({"productId":item.productId._id,"nameSize":item.sizeName});
             //let colors=size.colors;
             
             let indexOf= size.colors.findIndex(color => color.colorName==item.colorName);
@@ -60,6 +71,7 @@ class OrderController{
     let itemIds=[];
 
     await this.addItemList(items,itemIds);
+    console.log(itemIds);
     const orderAdd=new Order();
     orderAdd.userId=req.body.userId;
     orderAdd.totalPrice=req.body.totalPrice;
@@ -134,17 +146,22 @@ class OrderController{
        
     }
 
-
-
     async addItemList(items,addItemList)
     {
         let listSizeUpdate=[];
         let listItemAdd=[];
+        
         for(let i=0;i<items.length;i++)
         {
             const itemAdd=new ItemOrder(items[i]);
-            const sizeFind= await Size.findOne({"nameSize":items[i].sizeName,"productId":items[i].productId});
-            const size= new Size(sizeFind);
+            //const sizeFind= await Size.findOne({"nameSize":items[i].sizeName,"productId":items[i].productId});
+
+            const sizeFind= await Size.findById(items[i].sizeId);
+            //const size= new Size(sizeFind);
+
+
+            const size= sizeFind;
+            console.log(size);
 
             const colorName=itemAdd.colorName;
             let colors= size['colors'];
@@ -156,7 +173,6 @@ class OrderController{
                     if(colors[jj].quantity>=itemAdd.quantity)
                     {
                         size.colors[jj].quantity=colors[jj].quantity-itemAdd.quantity;
-
                         listSizeUpdate.push(size);
                         listItemAdd.push(itemAdd);
                         // await size.save();
@@ -170,10 +186,20 @@ class OrderController{
             
             
         }
+        // console.log(listSizeUpdate.length);
+        // console.log(items.length);
+        // for(let size of listSizeUpdate)
+        //     {
+        //         console.log(size.colors);
+               
+                
+        //     }
+        //console.log(items);
         if(listSizeUpdate.length == items.length)
         {
             for(let size of listSizeUpdate)
             {
+                console.log(size.colors);
                 await size.save();
                 
             }
@@ -184,6 +210,69 @@ class OrderController{
             }
         }
     }
+
+    // async addItemList(items,addItemList)
+    // {
+    //     let listSizeUpdate=[];
+    //     let listItemAdd=[];
+        
+    //     for(let i=0;i<items.length;i++)
+    //     {
+    //         const itemAdd=new ItemOrder(items[i]);
+    //         const sizeFind= await Size.findOne({"nameSize":items[i].sizeName,"productId":items[i].productId});
+    //         //const size= new Size(sizeFind);
+
+
+    //         const size= sizeFind;
+    //         console.log(size);
+
+    //         const colorName=itemAdd.colorName;
+    //         let colors= size['colors'];
+
+    //         for(let jj=0;jj<colors.length;jj++)
+    //         {
+    //             if(colors[jj].colorName==colorName)
+    //             {
+    //                 if(colors[jj].quantity>=itemAdd.quantity)
+    //                 {
+    //                     size.colors[jj].quantity=colors[jj].quantity-itemAdd.quantity;
+    //                     listSizeUpdate.push(size);
+    //                     listItemAdd.push(itemAdd);
+    //                     // await size.save();
+    //                     // await itemAdd.save();
+    //                     // addItemList.unshift(itemAdd._id); 
+    //                 }
+    //             }
+
+    //         }
+            
+            
+            
+    //     }
+    //     // console.log(listSizeUpdate.length);
+    //     // console.log(items.length);
+    //     // for(let size of listSizeUpdate)
+    //     //     {
+    //     //         console.log(size.colors);
+               
+                
+    //     //     }
+    //     //console.log(items);
+    //     if(listSizeUpdate.length == items.length)
+    //     {
+    //         for(let size of listSizeUpdate)
+    //         {
+    //             console.log(size.colors);
+    //             await size.save();
+                
+    //         }
+    //         for( let item of listItemAdd)
+    //         {
+    //             await item.save();
+    //             addItemList.unshift(item._id); 
+    //         }
+    //     }
+    // }
 }
 
 module.exports=new OrderController;

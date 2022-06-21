@@ -215,7 +215,13 @@ router.get('/payment/vnpay_return', async (req, res, next) => {
     return res.redirect(redirect);
       //return res.status(200).json({ RspCode: "00", Message: "success" });
   } else{
-    return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
+    const redirect=process.env.URL_SYSTEM+"checkout";
+    const order= await Order.findById(orderId);
+    order.status("Cancel");
+    await orderController.addQuantityProductAgain(orderResult);
+    await order.save();
+    return res.redirect(redirect).json();
+    //return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
   }
 });
 

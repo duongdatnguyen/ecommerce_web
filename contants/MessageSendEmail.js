@@ -672,7 +672,7 @@ module.exports.createMessage=async function createMessage(order){
                                       "
                                     >
                                       <span style="font-size: 16px"
-                                        >Order #90920</span
+                                        >Order #${orderEmail.id}</span
                                       >
                                     </p>
                                   </div>
@@ -739,7 +739,7 @@ module.exports.createMessage=async function createMessage(order){
                                       "
                                     >
                                       <span style="font-size: 16px"
-                                        >1.11.2021 11.15</span
+                                        >${orderEmail.createdAt}</span
                                       >
                                     </p>
                                   </div>
@@ -1026,60 +1026,7 @@ module.exports.createmailItem=function(order)
                           padding-top: 35px;
                         "
                       >
-                        <h1
-                          style="
-                            margin: 0;
-                            color: #010101;
-                            font-size: 24px;
-                            font-family: Arial, Helvetica Neue, Helvetica,
-                              sans-serif;
-                            line-height: 120%;
-                            text-align: left;
-                            direction: ltr;
-                            font-weight: 400;
-                            letter-spacing: normal;
-                            margin-top: 0;
-                            margin-bottom: 0;
-                          "
-                        >
-                          <strong>${item.productId.name}</strong>
-                        </h1>
-                        <h1
-                          style="
-                            margin: 0;
-                            color: #010101;
-                            font-size: 24px;
-                            font-family: Arial, Helvetica Neue, Helvetica,
-                              sans-serif;
-                            line-height: 120%;
-                            text-align: left;
-                            direction: ltr;
-                            font-weight: 400;
-                            letter-spacing: normal;
-                            margin-top: 0;
-                            margin-bottom: 0;
-                          "
-                        >
-                        <strong>Size :${item.sizeName}</strong>
-                        </h1>
-                        <h1
-                          style="
-                            margin: 0;
-                            color: #010101;
-                            font-size: 24px;
-                            font-family: Arial, Helvetica Neue, Helvetica,
-                              sans-serif;
-                            line-height: 120%;
-                            text-align: left;
-                            direction: ltr;
-                            font-weight: 400;
-                            letter-spacing: normal;
-                            margin-top: 0;
-                            margin-bottom: 0;
-                          "
-                        >
-                        <strong>Quantity: ${item.quantity}</strong>
-                        </h1>
+                        
                       </td>
                     </tr>
                   </table>
@@ -1398,7 +1345,7 @@ module.exports.tableOrderPrice=function (totalPrice,ShippingPrice){
                               mso-line-height-alt: 24px;
                             "
                           >
-                            <span style="font-size: 16px">${totalPrice}</span>
+                            <span style="font-size: 16px">${totalPrice} VND</span>
                           </p>
                         </div>
                       </div>
