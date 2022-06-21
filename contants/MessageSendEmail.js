@@ -900,7 +900,11 @@ module.exports.createmailItem=function(order)
   let message= "";
   for (let item of order.items)
   {
-    console.log(item);
+    if(order.isPaypal==true)
+    {
+      item.totalPrice=item.totalPrice*20000;
+    }
+    //console.log(item);
     message+= `<table
     class="row row-6"
     align="center"
