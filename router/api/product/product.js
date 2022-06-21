@@ -92,7 +92,8 @@ router.post("/images/:productId",multerService.single("photo"),async(req,res)=>{
     
     productUpdate.imageMain=newPath.url;
     await productUpdate.save();
-    return res.status(200).json(productUpdate);
+    const product =await Product.findById(productUpdate.id).populate('subcategoryId').populate("size");
+    return res.status(200).json(product);
 })
 
 //Add product 

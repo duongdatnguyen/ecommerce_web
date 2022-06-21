@@ -144,7 +144,7 @@ class CouponsController
         }
 
         Coupon.findByIdAndDelete(couponId)
-        .then(()=>res.status(200).json({"messsage":"Delete success"}))            
+        .then(()=>res.status(200).json({"_id":couponId,"messsage":"Delete success"}))            
         .catch(error=>res.status(400).json({"messsage":"Delete failed", "error":error}));
 
     }
