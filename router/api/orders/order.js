@@ -222,7 +222,7 @@ router.get('/payment/vnpay_return', async (req, res, next) => {
     order.status("Cancel");
     await orderController.addQuantityProductAgain(orderResult);
     await order.save();
-    return res.redirect(redirect).json();
+    return res.redirect(redirect);
     //return res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
   }
 });
