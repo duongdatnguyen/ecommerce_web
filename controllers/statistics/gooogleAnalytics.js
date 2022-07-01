@@ -42,7 +42,7 @@ const viewId="268322270";
   const result = await google.analytics('v3').data.ga.get({
     'auth': jwt,
     'ids': `ga:${viewId}`,
-    'start-date': '7daysAgo',
+    'start-date': '20daysAgo',
     //'start-date': 'today',
     'end-date': 'today',
     'dimensions': 'ga:searchKeyword',
@@ -55,7 +55,7 @@ const viewId="268322270";
 
    //console.log(result.data.rows);
   // console.log('Report result:',result.data.rows[0]);
-
+  //console.log(result.data);
 
 
 const listTrending=result.data.rows.sort((a,b)=>(a[1]*1>=b[1]*1) ?-1 :1).map(row =>  {
